@@ -618,7 +618,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     <!-- Pop up Html  -->
          <!-- Pop-up for email registration -->
-    <div id="popup" class="popup">
+<div id="popup" class="popup">
         <div class="popup-content">
             <div class="popup-left">
                 <img src="images/popup1.jpg" alt="Fashion Image">
@@ -630,16 +630,51 @@ document.addEventListener('DOMContentLoaded', function() {
                 <h1>Join 5*A!</h1>
 
                 <h2 class="popuph2">Unlock Your Fashion</h2>
-                <p>Sign up now to enjoy <strong> 20% off </strong> your first order and exclusive updates on the latest trends.</p>
+                <p>Sign up now to enjoy <strong> 20% off </strong> your first order and exclusive updates on the latest trends</p>
                 <form id="emailForm">
                     <input type="email" id="popup-email" placeholder="Enter your email" required>
                     <button type="submit" class="signup-btn">Continue</button>
                 </form>
                 <a href="#" class="no-thanks close-btn">No thanks, I’ll shop full price</a>
-                <p class="terms">By signing up, you agree to our <a href="terms-conditions.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a>.</p>
+                <p class="terms">By signing up, you agree to our <a href="terms-conditions.html">Terms of Service</a></p>
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    const popup = document.getElementById('popup');
+    const emailForm = document.getElementById('emailForm');
+    const closeBtn = document.querySelector('.close-btn');
+    
+    // Show popup after 5 seconds
+    setTimeout(() => {
+        popup.style.display = 'flex';
+    }, 2000);
+    
+    // Close popup when clicking "No thanks"
+    closeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        popup.style.display = 'none';
+    });
+    
+    // Handle form submission
+    emailForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('popup-email').value;
+        // Here you can add code to handle the email submission
+        console.log('Email submitted:', email);
+        popup.style.display = 'none';
+        alert('Thank you for subscribing!');
+    });
+    
+    // Close popup when clicking outside
+    popup.addEventListener('click', (e) => {
+        if (e.target === popup) {
+            popup.style.display = 'none';
+        }
+    });
+});
+</script>
 
 
     <!-- featured section  -->
