@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>5*A ai</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 300px; 
+            background: white;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.);
+        }
+
+        .title {
+            font-size: 64px;
+            font-weight: bold;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            background: linear-gradient(45deg, #007bff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px #007bff, 0 0 10 px #007bff;
+            }
+            to {
+                text-shadow: 0 0 20px #00ff88, 0 0 30 px #00ff88;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="overlay">
+            <h1 class="title">5*A </h1>
+        </div>
+        <iframe src="https://r1web.com/"></iframe>
+    </div>
+
+    <script>
+        window.onload = function() {
+            document.querySelector('.overlay').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>

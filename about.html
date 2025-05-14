@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Changed Title -->
+    <title>About Us - 5*A</title>
+    <link rel="shortcut icon" href="images/logo1.png" type="image/x-icon">
+    <link rel="stylesheet" href="preloaderStyle.css">
+    <link rel="stylesheet" href="style.css" /> <!-- Main stylesheet -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="./Style/popup.css"> <!-- Added popup CSS -->
+
+    <style>
+      /* General Styles */
+      html { scroll-behavior: smooth; }
+      body { margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f7f7f7; color: #333; display: flex; flex-direction: column; min-height: 100vh; padding-top: 70px; transition: background-color 0.3s ease, color 0.3s ease; }
+      main { flex-grow: 1; }
+
+      /* Dark Theme Styles */
+      body.dark-theme { background-color: #1a1a1a; color: #f1f1f1; }
+      body.dark-theme h1, body.dark-theme h2, body.dark-theme h3, body.dark-theme h4 { color: #f1f1f1; }
+      body.dark-theme .about-section, body.dark-theme .conditions-section { background: #2c2c2c; box-shadow: 0 8px 16px rgba(255, 255, 255, 0.05); }
+      body.dark-theme .about-title, body.dark-theme .conditions-title { color: #eee; border-bottom-color: #444; }
+      body.dark-theme .leftabout p, body.dark-theme .rightabout p, body.dark-theme .conditions-content p, body.dark-theme .conditions-content li { color: #ccc; }
+      body.dark-theme .about-images img { box-shadow: 0 0 15px 5px rgba(0, 0, 0, 0.5); opacity: 0.95; }
+      body.dark-theme .leftabout h3, body.dark-theme #div2 { color: #64b5f6; }
+      body.dark-theme .slogan { color: #aaa; }
+      body.dark-theme #div3 { color: #eee; }
+      body.dark-theme .conditions-content a { color: #87cefa; }
+
+
+      /* About Us Section */
+      .about-section { width: 90%; max-width: 1200px; padding: 50px 0; margin: 40px auto; background: #ffffff; border-radius: 10px; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05); }
+      .about-container { padding: 0 5%; }
+      .about-title { font-size: 2.8em; text-align: center; margin-bottom: 40px; padding-bottom: 15px; border-bottom: 2px solid #eee; font-weight: bold; }
+      .leftabout, .rightabout { text-align: left; flex: 1; padding: 0 20px; }
+      .leftabout h3 { font-size: 1.8em; margin-bottom: 15px; color: #0056b3; text-align: left; }
+      .slogan { font-size: 1.3em; font-style: italic; color: #555; margin-bottom: 20px; text-align: left; }
+      .aboutus-body { font-size: 1.1em; line-height: 1.7; margin-bottom: 15px; }
+      #div2 { font-size: 1.8em; font-weight: bold; color: #0056b3; margin-bottom: 15px; text-align: left; }
+      #div3 { font-size: 1.2em; font-weight: bold; text-align: center; margin-top: 40px; color: #333; }
+      .about-content-first, .about-content-second { display: flex; align-items: center; justify-content: center; margin-bottom: 60px; gap: 40px; flex-wrap: wrap; }
+      .about-content-second { flex-direction: row-reverse; }
+      .about-text { flex-basis: 50%; min-width: 300px; }
+      .about-images { flex-basis: 40%; min-width: 300px; text-align: center; transition: transform 0.4s ease-in-out; }
+      .about-images:hover { transform: scale(1.03); }
+      .about-images img { max-width: 100%; height: auto; width: auto; max-height: 450px; border-radius: 8px; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); }
+
+      /* Conditions of Use Section */
+      .conditions-section { width: 90%; max-width: 1200px; padding: 40px 5%; margin: 40px auto; background: #ffffff; border-radius: 10px; box-shadow: 0 8px 16px rgba(0,0,0,0.05); }
+      .conditions-title { font-size: 2.2em; text-align: center; margin-bottom: 30px; padding-bottom: 10px; border-bottom: 2px solid #eee; font-weight: bold; }
+      .conditions-content h4 { font-size: 1.3em; color: #0056b3; margin-top: 25px; margin-bottom: 10px; }
+      body.dark-theme .conditions-content h4 { color: #64b5f6; }
+      .conditions-content p, .conditions-content li { font-size: 1em; line-height: 1.6; margin-bottom: 15px; }
+      .conditions-content ul { padding-left: 20px; }
+      .conditions-content a { color: #0056b3; text-decoration: underline; }
+      .conditions-content a:hover { color: #003d80; }
+
+
+      /* Media Queries */
+      @media (max-width: 992px) { .about-title { font-size: 2.4em; } .aboutus-body { font-size: 1em; } .leftabout h3, #div2 { font-size: 1.6em; } .slogan { font-size: 1.2em; } #div3 { font-size: 1.1em; } .about-content-first, .about-content-second { gap: 30px; } .conditions-title { font-size: 2em; } .conditions-content h4 {font-size: 1.2em;} .conditions-content p, .conditions-content li {font-size: 0.95em;} }
+      @media (max-width: 768px) { .about-section, .conditions-section { width: 95%; padding: 40px 2%; margin: 30px auto; } .about-title { font-size: 2em; margin-bottom: 30px; } .about-content-first, .about-content-second { flex-direction: column; text-align: center; margin-bottom: 40px; } .about-content-second { flex-direction: column; } .leftabout, .rightabout, #div2 { text-align: center; } .about-text { flex-basis: auto; margin-right: 0; order: 2; } .about-images { flex-basis: auto; margin: 0; order: 1; } .about-images img { max-height: 350px; } #div3 { margin-top: 25px; } .conditions-title {font-size: 1.8em;} .conditions-content h4 {font-size: 1.1em;} .conditions-content p, .conditions-content li {font-size: 0.9em;} }
+      @media (max-width: 480px) { body { padding-top: 70px; } .about-title { font-size: 1.8em; margin-bottom: 25px; } .aboutus-body { font-size: 0.95em; } .leftabout h3, #div2 { font-size: 1.4em; } .slogan { font-size: 1.1em; } #div3 { font-size: 1em; } .about-images img { max-height: 300px; } .conditions-title {font-size: 1.6em;} .conditions-content h4 {font-size: 1em;} .conditions-content p, .conditions-content li {font-size: 0.85em;} }
+
+      /* Standardized CSS (Header, Footer, Common Elements) */
+      .header { background-color: #ffffff; position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; padding: 10px 2%; height: 70px; transition: background-color 0.3s ease, box-shadow 0.3s ease; }
+      body.dark-theme .header { background-color: #1f1f1f; box-shadow: 0 2px 5px rgba(255,255,255,0.1); }
+      .tabs-container { display: flex; align-items: center; }
+      .tabs { list-style: none; padding: 0; margin: 0; display: flex; position: relative; }
+      .tab { margin: 0 10px; position: relative; }
+      .tab a { text-decoration: none; color: #333; padding: 10px 5px; display: block; position: relative; transition: color 0.3s ease; font-weight: 500; }
+      body.dark-theme .tab a { color: #f1f1f1; }
+      body.dark-theme .tab a.active { color: #4ca1ff; }
+      .cursor { position: absolute; bottom: 0; left: 0; height: 3px; background-color: #007bff; border-radius: 2px; opacity: 0; transition: left 0.3s ease, width 0.3s ease, opacity 0.3s ease; pointer-events: none; }
+      body.dark-theme .cursor { background-color: #4ca1ff; }
+      .tab:hover .cursor, .tab a.active + .cursor { opacity: 1; }
+      .dropdown-content { display: none; position: absolute; background-color: #fff; min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; list-style: none; padding: 0; margin-top: 5px; border-radius: 4px; }
+      body.dark-theme .dropdown-content { background-color: #333; box-shadow: 0px 8px 16px 0px rgba(255,255,255,0.1); }
+      .dropdown:hover .dropdown-content { display: block; }
+      .dropdown-content li a { padding: 12px 16px; display: block; color: #333; font-weight: normal; }
+      body.dark-theme .dropdown-content li a { color: #f1f1f1; }
+      .dropdown-content li a:hover { background-color: #f1f1f1; }
+      body.dark-theme .dropdown-content li a:hover { background-color: #444; }
+      .utils { display: flex; align-items: center; }
+      .nav-links { list-style: none; padding: 0; margin: 0; display: flex; align-items: center; gap: 15px; }
+      .nav-link i, .nav-link a > i { font-size: 1.2em; cursor: pointer; color: #333; transition: color 0.3s ease; }
+      body.dark-theme .nav-link i, body.dark-theme .nav-link a > i { color: #f1f1f1; }
+      .nav-link i:hover, .nav-link a:hover > i { color: #010912; }
+      body.dark-theme .nav-link i:hover, body.dark-theme .nav-link a:hover > i { color: #4ca1ff; }
+      .mode-toggle { background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; }
+      .mode-toggle img { width: 24px; height: 24px; }
+      .hidden { display: none; }
+      #search-bar { display: none; position: absolute; top: 65px; right: 20px; background-color: white; padding: 10px; border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); z-index: 1002; }
+      body.dark-theme #search-bar { background-color: #333; box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1); }
+      #search-bar input { padding: 5px 8px; width: 200px; border: 1px solid #ccc; border-radius: 3px; outline: none; }
+      body.dark-theme #search-bar input { background-color: #444; border-color: #555; color: #eee; }
+      #search-bar button { padding: 5px 10px; background-color: #333; color: white; border: none; border-radius: 3px; cursor: pointer; margin-left: 5px; }
+      body.dark-theme #search-bar button { background-color: #555; }
+      #search-bar button:hover { background-color: #555; }
+      body.dark-theme #search-bar button:hover { background-color: #777; }
+      .visitor-counter { text-align: center; margin: 10px 0; font-size: 0.9em; color: #555; }
+      body.dark-theme .visitor-counter { color: #aaa; }
+      .visitor-counter .icon { margin-right: 5px; }
+      .footer { background-color: #f1f1f1; padding: 40px 5%; display: flex; justify-content: space-around; flex-wrap: wrap; border-top: 1px solid #ddd; }
+      body.dark-theme .footer { background-color: #111; color: #ccc; border-top: 1px solid #333; }
+      .footer-section { flex: 1; min-width: 220px; margin: 20px; }
+      .footer h1 { font-size: 1.4em; margin-bottom: 15px; color: #333; }
+      body.dark-theme .footer h1 { color: #eee; }
+      .footer-list { list-style: none; padding: 0; margin: 0; }
+      .footer-list li { margin-bottom: 10px; font-size: 0.95em; color: #555; }
+      body.dark-theme .footer-list li { color: #aaa; }
+      .footer-list li a { color: #555; text-decoration: none; transition: color 0.3s ease; }
+      body.dark-theme .footer-list li a { color: #aaa; }
+      .footer-list li a:hover { color: #007bff; }
+      body.dark-theme .footer-list li a:hover { color: #4ca1ff; }
+      .footer .socials { margin-top: 15px; }
+      .footer .socials a { margin-right: 12px; font-size: 1.3em; color: #555; transition: color 0.3s ease; }
+      body.dark-theme .footer .socials a { color: #aaa; }
+      .footer .socials a:hover { color: #007bff; }
+      body.dark-theme .footer .socials a:hover { color: #4ca1ff; }
+      .footer .sub input[type="email"] { padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 65%; margin-right: 5px; }
+      body.dark-theme .footer .sub input[type="email"] { background-color: #444; border-color: #555; color: #eee; }
+      .footer .sub button.btn { padding: 10px 15px; background-color: #333; color: white; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.3s ease; }
+      body.dark-theme .footer .sub button.btn { background-color: #555; }
+      .footer .sub button.btn:hover { background-color: #555; }
+      body.dark-theme .footer .sub button.btn:hover { background-color: #777; }
+      .footer-copyright { background-color: #e9e9e9; text-align: center; padding: 15px 0; font-size: 0.9em; color: #666; }
+      body.dark-theme .footer-copyright { background-color: #000; color: #888; }
+      .scroll-top { position: fixed; right: 1.6%; background: linear-gradient(100deg, #1ca6f0, #3c7aff, #05deff); color: white; width: 60px; height: 60px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 24px; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, visibility 0s linear 0.3s; box-shadow: 0 5px 15px rgba(60, 122, 255, 0.4); overflow: visible; z-index: 1000; bottom: 15px; }
+      .scroll-top.show { opacity: 1; visibility: visible; transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, visibility 0s linear 0s; }
+      .scroll-top:hover { transform: scale(1.1); box-shadow: 0 8px 20px rgba(60, 122, 255, 0.6); animation: pulse 1.5s infinite; }
+      .scroll-top:active { transform: scale(1.05); }
+      .scroll-top-icon { position: relative; z-index: 2; transition: transform 0.3s ease; }
+      .scroll-top:hover .scroll-top-icon { transform: translateY(-3px); }
+      .progress-ring { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+      .progress-ring__circle { transition: stroke-dashoffset 0.35s; transform-origin: 50% 50%; stroke: #ffffff; stroke-width: 4; fill: transparent; }
+      @keyframes pulse { 0% { box-shadow: 0 5px 15px rgba(60, 122, 255, 0.4); } 50% { box-shadow: 0 8px 20px rgba(60, 122, 255, 0.7); } 100% { box-shadow: 0 5px 15px rgba(60, 122, 255, 0.4); } }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="wrapper"> <div class="box-wrap"> <div class="box one"></div> <div class="box two"></div> <div class="box three"></div> <div class="box four"></div> <div class="box five"></div> <div class="box six"></div> </div> </div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="header" id="header">
+        <div class="logo">
+            <a href="/"> <img src="images/logo.png" alt="5*A Logo" srcset=""> </a>
+            <i class="fa-solid fa-bars menu theme-icon" id="menu"></i>
+        </div>
+        <nav>
+            <div class="tabs-container">
+                <ul id="tabs" class="tabs">
+                    <li class="tab"><a href="index.html">Home</a></li>
+                    <li class="tab"><a href="about.html" class="active">About</a></li> <!-- Active class here -->
+                    <li class="tab"><a href="features.html">Features</a></li>
+                    <li class="dropdown tab">
+                        <a class="dropdown-parent">Products</a>
+                        <ul class="dropdown-content">
+                            <li><a href="mens.html">Men</a></li> <li><a href="womens.html">Women</a></li>
+                            <li><a href="child.html">Kid Section</a></li> <li><a href="accessories.html">Accessories</a></li>
+                        </ul>
+                    </li>
+                    <li class="tab" style="margin-left: 15px;"><a href="contact.html">Contact Us</a></li>
+                    <li class="tab"><a href="faq.html">FAQ</a></li>
+                </ul>
+            </div>
+        </nav>
+        <nav class="utils">
+            <ul class="nav-links">
+                <li><button class="mode-toggle" id="modeToggle"><span class="sun-icon glow"><img src="day-mode.png" alt="Light mode"></span><span class="moon-icon glow hidden"><img src="moon.png" alt="Dark mode"></span></button></li>
+                <li class="nav-link"><i class="fa-solid fa-cart-shopping theme-icon" id="cart-icon"></i></li>
+                <li class="nav-link"><a href="login-sginup.html"><i class="fa-solid fa-user theme-icon"></i></a></li>
+                <li class="nav-link"><i class="fa-solid fa-magnifying-glass theme-icon" id="search-icon"></i></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Search Bar -->
+    <div id="search-bar">
+        <input type="text" id="search" placeholder="Search..." /> <button type="submit" id="search-btn">Go</button>
+    </div>
+
+    <!-- Main Content Area -->
+    <main>
+        <section class="about-section" data-aos="fade-in" data-aos-duration="1000">
+            <!-- Changed Title -->
+            <h2 class="about-title">About 5*A</h2>
+        <section class="conditions-section" data-aos="fade-up" data-aos-delay="100">
+            <h2 class="conditions-title">Conditions of Use</h2>
+            <div class="conditions-content">
+                <p>Welcome to our services. Our services provide website features and other products and services to you when you visit or shop, use our products or services, use our applications for mobile, or use software provided by us in connection with any of the foregoing. By using the services, you agree, on behalf of yourself and all members of your household and others who use any service under your account, to the following conditions.</p>
+                <p><strong>Please read these conditions carefully.</strong></p>
+                <p>We offer a wide range of services, and sometimes additional terms may apply. When you use a service (for example, Your Profile, Gift Cards, Video, Your Media Library, devices, or applications) you also will be subject to the guidelines, terms, and agreements applicable to that service ("Service Terms"). If these Conditions of Use are inconsistent with the Service Terms, those Service Terms will control.</p>
+
+                <h4>PRIVACY</h4>
+                <p>Please review our <a href="privacy.html" title="Privacy Notice">Privacy Notice</a>, which also governs your use of our services, to understand our practices.</p>
+
+                <h4>ELECTRONIC COMMUNICATIONS</h4>
+                <p>When you use our services, or send e-mails, text messages, and other communications from your desktop or mobile device to us, you may be communicating with us electronically. You consent to receive communications from us electronically, such as e-mails, texts, mobile push notices, or notices and messages on this site or through other services, such as our Message Center, and you can retain copies of these communications for your records. You agree that all agreements, notices, disclosures, and other communications that we provide to you electronically satisfy any legal requirement that such communications be in writing.</p>
+
+                <h4>COPYRIGHT</h4>
+                <p>All content included in or made available through any service, such as text, graphics, logos, button icons, images, audio clips, digital downloads, data compilations, and software is the property of us or our content suppliers and protected by United States and international copyright laws. The compilation of all content included in or made available through any service is the exclusive property of us and protected by U.S. and international copyright laws.</p>
+
+                <h4>TRADEMARKS</h4>
+                <p><a href="#" title="Trademarks List">Click here to see a non-exhaustive list of trademarks</a>. In addition, graphics, logos, page headers, button icons, scripts, and service names included in or made available through any service are trademarks or trade dress of us in the U.S. and other countries. Our trademarks and trade dress may not be used in connection with any product or service that is not ours, in any manner that is likely to cause confusion among customers, or in any manner that disparages or discredits us. All other trademarks not owned by us that appear in any service are the property of their respective owners, who may or may not be affiliated with, connected to, or sponsored by us.</p>
+
+                <h4>LICENSE AND ACCESS</h4>
+                <p>Subject to your compliance with these Conditions of Use and any Service Terms, and your payment of any applicable fees, we or our content providers grant you a limited, non-exclusive, non-transferable, non-sublicensable license to access and make personal and non-commercial use of the services. This license does not include any resale or commercial use of any service, or its contents; any collection and use of any product listings, descriptions, or prices; any derivative use of any service or its contents; any downloading, copying, or other use of account information for the benefit of any third party; or any use of data mining, robots, or similar data gathering and extraction tools. All rights not expressly granted to you in these Conditions of Use or any Service Terms are reserved and retained by us or our licensors, suppliers, publishers, rightsholders, or other content providers. No service, nor any part of any service, may be reproduced, duplicated, copied, sold, resold, visited, or otherwise exploited for any commercial purpose without express written consent. You may not frame or utilize framing techniques to enclose any trademark, logo, or other proprietary information (including images, text, page layout, or form) without express written consent. You may not use any meta tags or any other "hidden text" utilizing our name or trademarks without the express written consent. You may not misuse the services. You may use the services only as permitted by law. The licenses granted by us terminate if you do not comply with these Conditions of Use or any Service Terms.</p>
+
+                <h4>YOUR ACCOUNT</h4>
+                <p>You may need your own account to use certain services, and you may be required to be logged in to the account and have a valid payment method associated with it. If there is a problem charging your selected payment method, we may charge any other valid payment method associated with your account. Visit Your Payments to manage your payment options. You are responsible for maintaining the confidentiality of your account and password and for restricting access to your account, and you agree to accept responsibility for all activities that occur under your account or password. We do sell products for children, but we sell them to adults, who can purchase with a credit card or other permitted payment method. If you are under 18, you may use the services only with involvement of a parent or guardian. Parents and guardians may create profiles for teenagers in their household. Alcohol listings are intended for adults. You must be at least 21 years of age to purchase alcohol, or use any site functionality related to alcohol. We reserve the right to refuse service, terminate accounts, terminate your rights to use the services, remove or edit content, or cancel orders in our sole discretion.</p>
+
+                <h4>REVIEWS, COMMENTS, COMMUNICATIONS, AND OTHER CONTENT</h4>
+                <p>You may post reviews, comments, photos, videos, and other content; send e-cards and other communications; and submit suggestions, ideas, comments, questions, or other information, so long as the content is not illegal, obscene, threatening, defamatory, invasive of privacy, infringing of intellectual property rights (including publicity rights), or otherwise injurious to third parties or objectionable, and does not consist of or contain software viruses, political campaigning, commercial solicitation, chain letters, mass mailings, or any form of "spam" or unsolicited commercial electronic messages. You may not use a false e-mail address, impersonate any person or entity, or otherwise mislead as to the origin of a card or other content. We reserve the right (but not the obligation) to remove or edit such content, but do not regularly review posted content.</p>
+                <p>If you do post content or submit material, and unless we indicate otherwise, you grant us a nonexclusive, royalty-free, perpetual, irrevocable, and fully sublicensable right to use, reproduce, modify, adapt, publish, perform, translate, create derivative works from, distribute, and display such content throughout the world in any media. You grant us and sublicensees the right to use the name that you submit in connection with such content, if they choose. You represent and warrant that you own or otherwise control all of the rights to the content that you post; that the content is accurate; that use of the content you supply does not violate this policy and will not cause injury to any person or entity; and that you will indemnify us for all claims resulting from content you supply. We have the right but not the obligation to monitor and edit or remove any activity or content. We take no responsibility and assume no liability for any content posted by you or any third party.</p>
+
+                <h4>INTELLECTUAL PROPERTY COMPLAINTS</h4>
+                <p>We respect the intellectual property of others. If you believe that your intellectual property rights are being infringed, please follow our Notice and Procedure for Making Claims of Copyright Infringement.</p>
+
+                <h4>RISK OF LOSS</h4>
+                <p>All purchases of physical items from us are made pursuant to a shipment contract. This means that the risk of loss and title for such items pass to you upon our delivery to the carrier.</p>
+
+                <h4>RETURNS, REFUNDS AND TITLE</h4>
+                <p>We do not take title to returned items until the item arrives at our fulfillment center. At our discretion, a refund may be issued without requiring a return. In this situation, we do not take title to the refunded item. For more information about our returns and refunds, please see our <a href="return-policy.html" title="Returns Center">Returns Center</a>.</p>
+
+                <h4>PRODUCT DESCRIPTIONS</h4>
+                <p>We attempt to be as accurate as possible. However, we do not warrant that product descriptions or other content of any service is accurate, complete, reliable, current, or error-free. If a product offered by us is not as described, your sole remedy is to return it in unused condition.</p>
+
+                <h4>PRICING</h4>
+                <p>"List Price" means the suggested retail price of a product as provided by a manufacturer, supplier, or seller. We regularly check List Prices against prices recently found on our site and other retailers. Certain products may have a "Was Price" displayed, which is determined using recent price history of the product on our site.</p>
+                <p>With respect to items sold by us, we cannot confirm the price of an item until you order. Despite our best efforts, a small number of the items in our catalog may be mispriced. If the correct price of an item sold by us is higher than our stated price, we will, at our discretion, either contact you for instructions before shipping or cancel your order and notify you of such cancellation. Other merchants may follow different policies in the event of a mispriced item.</p>
+                <p>We generally do not charge your credit card until after your order has entered the shipping process or, for digital products, until we make the digital product available to you.</p>
+
+                <h4>APP PERMISSIONS</h4>
+                <p>When you use apps created by us, such as our App or Kindle App, you may grant certain permissions to us for your device. Most mobile devices provide you with information about these permissions.</p>
+
+                <h4>SANCTIONS AND EXPORT POLICY</h4>
+                <p>You may not use any service if you are the subject of U.S. sanctions or of sanctions consistent with U.S. law imposed by the governments of the country where you are using the services. You must comply with all U.S. or other export and re-export restrictions that may apply to goods, software (including our Software), technology, and services.</p>
+
+                <h4>OTHER BUSINESSES</h4>
+                <p>Parties other than us operate stores, provide services or software, or sell product lines through our services. In addition, we provide links to the sites of affiliated companies and certain other businesses. If you purchase any of the products or services offered by these businesses or individuals, you are purchasing directly from those third parties, not from us. We are not responsible for examining or evaluating, and we do not warrant, the offerings of any of these businesses or individuals (including the content of their websites). We do not assume any responsibility or liability for the actions, products, and content of all these and any other third parties. You should carefully review their privacy statements and other conditions of use.</p>
+
+                <h4>DISCLAIMER OF WARRANTIES AND LIMITATION OF LIABILITY</h4>
+                <p>THE SERVICES AND ALL INFORMATION, CONTENT, MATERIALS, PRODUCTS (INCLUDING SOFTWARE) AND OTHER SERVICES INCLUDED ON OR OTHERWISE MADE AVAILABLE TO YOU THROUGH THE SERVICES ARE PROVIDED BY US ON AN "AS IS" AND "AS AVAILABLE" BASIS, UNLESS OTHERWISE SPECIFIED IN WRITING. WE MAKE NO REPRESENTATIONS OR WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, AS TO THE OPERATION OF THE SERVICES, OR THE INFORMATION, CONTENT, MATERIALS, PRODUCTS (INCLUDING SOFTWARE) OR OTHER SERVICES INCLUDED ON OR OTHERWISE MADE AVAILABLE TO YOU THROUGH THE SERVICES, UNLESS OTHERWISE SPECIFIED IN WRITING. YOU EXPRESSLY AGREE THAT YOUR USE OF THE SERVICES IS AT YOUR SOLE RISK.</p>
+                <p>TO THE FULL EXTENT PERMISSIBLE BY LAW, WE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. WE DO NOT WARRANT THAT THE SERVICES, INFORMATION, CONTENT, MATERIALS, PRODUCTS (INCLUDING SOFTWARE) OR OTHER SERVICES INCLUDED ON OR OTHERWISE MADE AVAILABLE TO YOU THROUGH THE SERVICES, OUR SERVERS OR ELECTRONIC COMMUNICATIONS SENT FROM US ARE FREE OF VIRUSES OR OTHER HARMFUL COMPONENTS. TO THE FULL EXTENT PERMISSIBLE BY LAW, WE WILL NOT BE LIABLE FOR ANY DAMAGES OF ANY KIND ARISING FROM THE USE OF ANY SERVICE, OR FROM ANY INFORMATION, CONTENT, MATERIALS, PRODUCTS (INCLUDING SOFTWARE) OR OTHER SERVICES INCLUDED ON OR OTHERWISE MADE AVAILABLE TO YOU THROUGH ANY SERVICE, INCLUDING, BUT NOT LIMITED TO DIRECT, INDIRECT, INCIDENTAL, PUNITIVE, AND CONSEQUENTIAL DAMAGES, UNLESS OTHERWISE SPECIFIED IN WRITING.</p>
+
+                <h4>DISPUTES</h4>
+                <p><strong>Any dispute or claim relating in any way to your use of any service will be adjudicated in the state or Federal courts in King County, Washington, and you consent to exclusive jurisdiction and venue in these courts. We each waive any right to a jury trial.</strong></p>
+
+                <h4>APPLICABLE LAW</h4>
+                <p>By using any service, you agree that applicable federal law, and the laws of the state of Washington, without regard to principles of conflict of laws, will govern these Conditions of Use and any dispute of any sort that might arise between you and us.</p>
+
+                <h4>SITE POLICIES, MODIFICATION, AND SEVERABILITY</h4>
+                <p>Please review our other policies, such as our pricing policy, posted on this site. These policies also govern your use of the services. We reserve the right to make changes to our site, policies, Service Terms, and these Conditions of Use at any time. If any of these conditions shall be deemed invalid, void, or for any reason unenforceable, that condition shall be deemed severable and shall not affect the validity and enforceability of any remaining condition.</p>
+
+                <h4>OUR ADDRESS</h4>
+                <p>5*A<br>P.O. Box 81226<br>Seattle, WA 98108-1226</p> <!-- Updated Brand Name -->
+
+                <h4>ADDITIONAL SOFTWARE TERMS</h4>
+                <p>The following terms (“Software Terms”) apply to any software (including any updates or upgrades to the software) and any related documentation we make available to you in connection with the services (the "Software").</p>
+                <ul>
+                    <li><strong>Use of the Software.</strong> You may use Software solely for purposes of enabling you to use the services as provided by us, and as permitted by these Conditions of Use and any Service Terms. You may not incorporate any portion of the Software into other programs or compile any portion of it in combination with other programs, or otherwise copy (except to exercise rights granted in this section), modify, create derivative works of, distribute, assign any rights to, or license the Software in whole or in part. All software used in any service is the property of us or our software suppliers and is protected by United States and international copyright laws.</li>
+                    <li><strong>Use of Third Party Services.</strong> When you use the Software, you may also be using the services of one or more third parties, such as a wireless carrier or a mobile software provider. Your use of these third-party services may be subject to the separate policies, terms of use, and fees of these third parties.</li>
+                    <li><strong>No Reverse Engineering.</strong> You may not reverse engineer, decompile or disassemble, tamper with, or bypass any security associated with the Software, whether in whole or in part.</li>
+                    <li><strong>Updates.</strong> We may offer automatic or manual updates to the Software at any time and without notice to you.</li>
+                    <li><strong>Government End Users.</strong> If you are a U.S. Government end user, we are licensing the Software to you as a "Commercial Item" as that term is defined in the U.S. Code of Federal Regulations (see 48 C.F.R. § 2.101), and the rights we grant you to the Software are the same as the rights we grant to all others under these Conditions of Use.</li>
+                    <li><strong>Conflicts.</strong> In the event of any conflict between these Conditions of Use and any other or third-party terms applicable to any portion of Software, such as open-source license terms, such other terms will control as to that portion of the Software and to the extent of the conflict.</li>
+                </ul>
+
+                <h4>HOW TO SERVE A SUBPOENA OR OTHER LEGAL PROCESS</h4>
+                <p>We accept service of subpoenas or other legal process only through our national registered agent, Corporation Service Company (CSC). Subpoenas or other legal process may be served by sending them to CSC at the following address:</p>
+                <p>Corporation Service Company<br>300 Deschutes Way SW, Suite 208 MC-CSC1<br>Tumwater, WA 98501<br>Attn: Legal Department – Legal Process</p>
+                <p>Please note also that providing detailed and accurate information at the outset will facilitate efficient processing of your request. That information will include, for example, e-mail and/or credit card number used to make purchases for retail purchase information; the name, e-mail, and physical address of a seller for seller information; device serial number for devices; and IP address and complete time stamps.</p>
+
+                <h4>NOTICE AND PROCEDURE FOR MAKING CLAIMS OF INTELLECTUAL PROPERTY INFRINGEMENT</h4>
+                <p>If you believe that your intellectual property rights have been infringed, please submit your complaint using our online form. This form may be used to report all types of intellectual property claims including, but not limited to, copyright, trademark, and patent claims.</p>
+                <p>We respond quickly to the concerns of rights owners about any alleged infringement, and we terminate repeat infringers in appropriate circumstances.</p>
+                <p>We offer the following alternative to our online form for copyright complaints only. You may submit written claims of copyright infringement to our Copyright Agent at:</p>
+                <p>Copyright Agent<br>5*A Legal Department<br>P.O. Box 81226<br>Seattle, WA 98108<br>phone: (206) 266-4064<br>e-mail: copyright@legal.5a.com</p> <!-- Placeholder email, update if needed -->
+                <p>Courier address:<br>Copyright Agent<br>5*A Legal Department<br>2021 7th Avenue<br>Seattle, WA 98121 USA</p> <!-- Updated Brand Name -->
+                <p>Written claims concerning copyright infringement must include the following information:</p>
+                <ul>
+                    <li>A physical or electronic signature of the person authorized to act on behalf of the owner of the copyright interest;</li>
+                    <li>A description of the copyrighted work that you claim has been infringed upon;</li>
+                    <li>A description of where the material that you claim is infringing is located on the site;</li>
+                    <li>Your address, telephone number, and e-mail address;</li>
+                    <li>A statement by you that you have a good-faith belief that the disputed use is not authorized by the copyright owner, its agent, or the law; and</li>
+                    <li>A statement by you, made under penalty of perjury, that the above information in your notice is accurate and that you are the copyright owner or authorized to act on the copyright owner's behalf.</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+     <footer class="footer">
+
+        <div class="footer-section">
+            <h1>Contact Us</h1>
+            <ul class="footer-list">
+                <li><a href="Ahmedbakr@internet.ru">Ahmedbakr@internet.ru</a></li>
+                <li>2nd Floor,cairo ,Egypt</li>
+                <li><a href="tel:+91xxxxxxxx2020">+20 1234567</a></li>
+                <li class="border-list"></li>
+                <li class="socials">
+                    <a href="https://vk.link/hioffce" id="linkedin" target="_blank">
+                        <i class="fa-brands fa-linkedin"></i>
+                    </a>
+                    <a href="https://vk.link/hioffce" id="github"target="_blank">
+                        <i class="fa-brands fa-github"></i>
+                    </a>
+                    <a href="https://vk.link/hioffce" id="twitter"target="_blank">
+                        <i class="fa-brands fa-x-twitter"></i>
+                    </a>
+                    <a href="https://vk.link/hioffce" id="instagram"target="_blank">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="footer-section quick-links">
+            <h1>Quick Links</h1>
+            <ul class="footer-list">
+                <li><a href="about.html"><i class="fas fa-info-circle"></i> About Us</a></li>
+  <li><a href="contributors.html"><i class="fas fa-users"></i> Our Contributors</a></li>
+  <li><a href="terms-conditions.html"><i class="fas fa-file-contract"></i> Terms & Conditions</a></li>
+  <li><a href="shopclothing.html"><i class="fas fa-undo-alt"></i>shopclothing</a></li>
+  <li><a href="https://vk.link/hioffce" target="_blank"><i class="fab fa-github"></i> Star Us</a></li>
+  <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact Us</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h1>Subscribe to Newsletter</h1>
+            <ul class="footer-list">
+                <li>Maxime quae inventore sunt odio perspiciatis vitae saepe officia dolorem.</li>
+                <li class="sub">
+                    <input type="text" placeholder="Enter your email">
+                    <button class="btn">Subscribe</button>
+                </li>
+            </ul>
+        </div>
+    </footer>
+
+    <!-- <a class="gotopbtn" href="#"><i class="fas fa-arrow-up"></i></a> -->
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script>
+    // Theme Toggle Implementation
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('modeToggle');
+    const sunIcon = document.querySelector('.sun-icon');
+    const moonIcon = document.querySelector('.moon-icon');
+    
+    // Check for saved theme preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+    }
+
+    // Theme toggle function
+    function toggleTheme() {
+        document.body.classList.toggle('dark-theme');
+        sunIcon.classList.toggle('hidden');
+        moonIcon.classList.toggle('hidden');
+        
+        // Save theme preference
+        const isDark = document.body.classList.contains('dark-theme');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        
+        // Update theme-dependent elements
+        const themeIcons = document.querySelectorAll('.theme-icon');
+        themeIcons.forEach(icon => {
+            icon.style.color = isDark ? '#ffffff' : '#333333';
+        });
+    }
+
+    // Add click event listener
+    toggleBtn.addEventListener('click', toggleTheme);
+});
+
+// Add these helper functions for theme-specific operations
+function isDarkMode() {
+    return document.body.classList.contains('dark-theme');
+}
+
+function updateThemeColors() {
+    const isDark = isDarkMode();
+    document.documentElement.style.setProperty('--text-color', isDark ? '#ffffff' : '#333333');
+    document.documentElement.style.setProperty('--bg-color', isDark ? '#1a1a1a' : '#ffffff');
+    document.documentElement.style.setProperty('--header-bg', isDark ? '#1f1f1f' : '#ffffff');
+}
+
+  AOS.init();
+
+  (function() {
+      let headerVisible = false;
+      document.getElementById("menu").addEventListener("click", function () {
+          if (headerVisible === false) {
+              document.getElementById("header").style.height = "290px";
+              headerVisible = true;
+          } else {
+              document.getElementById("header").style.height = "50px";
+              headerVisible = false;
+          }
+      });
+
+      // Show "Go to Top" button after scrolling down
+      const goTopBtn = document.querySelector(".gotopbtn");
+      window.addEventListener("scroll", function () {
+          if (window.scrollY > 300) {  // Show the button after scrolling down 200px
+              goTopBtn.style.display = "block";
+          } else {
+              goTopBtn.style.display = "none";
+          }
+      });
+
+  })();
+  </script>
+    <script src="preloader.js"></script>
+    <script src="preloader.js"></script>
+    <script>
+        function handleSubmit(event) {
+            event.preventDefault(); 
+            const feedbackMessage = document.getElementById("feedbackMessage");
+            feedbackMessage.style.display = "block"; 
+
+            document.getElementById("feedbackForm").reset();
+        }
+    </script>
+
+    <button id="scrollToTopBtn" class="scroll-top" aria-label="Scroll to top">
+        <div class="scroll-top-icon">
+            <i class="fa-solid fa-arrow-up"></i>
+        </div>
+        <svg class="progress-ring" width="60" height="60">
+            <circle class="progress-ring__circle" stroke="#ffffff" stroke-width="4" fill="transparent" r="28" cx="30"
+                cy="30"></circle>
+        </svg>
+    </button>
+    <style>
+        .scroll-top {
+            position: fixed;
+            right: 1.6%;
+            background: linear-gradient(100deg, #1ca6f0, #3c7aff, #05deff);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 69, 159, 0.4);
+            overflow: visible;
+            z-index: 10;
+            bottom: 15px;
+            /* Ensure button is on top */
+        }
+    
+        .scroll-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+    
+        .scroll-top:hover {
+            transform: scale(1.1);
+            /* Subtle scaling instead of expanding */
+            box-shadow: 0 8px 20px rgba(255, 69, 159, 0.6);
+            /* Slightly larger shadow */
+        }
+    
+        .scroll-top:active {
+            transform: scale(1.05);
+            /* Minor scale reduction on click */
+        }
+    
+        .scroll-top-icon {
+            position: relative;
+            z-index: 2;
+            transition: transform 0.3s ease;
+        }
+    
+        .scroll-top:hover .scroll-top-icon {
+            transform: translateY(-3px);
+        }
+    
+        /* Progress Ring Styling */
+        .progress-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+            /* To start from the top */
+        }
+    
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform-origin: 50% 50%;
+        }
+    
+        /* Pulse Animation */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 5px 15px rgba(255, 69, 159, 0.4);
+            }
+    
+            50% {
+                box-shadow: 0 5px 15px rgba(255, 69, 159, 0.7);
+            }
+    
+            100% {
+                box-shadow: 0 5px 15px rgba(255, 69, 159, 0.4);
+            }
+        }
+    
+        .scroll-top:hover {
+            animation: pulse 1.5s infinite;
+        }
+    
+        .scroll-top.show {
+            animation: none;
+            /* No animation when showing the button */
+        }
+    
+        .scroll-top.show:hover {
+            animation: pulse 1.5s infinite;
+            /* Pulse on hover */
+        }
+    </style>
+    <script>
+        // Get the button
+        const scrollToTopBtn = document.getElementById("scrollToTopBtn");
+        const progressCircle = document.querySelector(".progress-ring__circle");
+        const radius = progressCircle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+    
+        // Set the circle progress properties
+        progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+        progressCircle.style.strokeDashoffset = circumference;
+    
+        // Function to show or hide the button based on scroll position
+        function toggleScrollButton() {
+            if (window.scrollY > 100) {
+                scrollToTopBtn.classList.add("show");
+            } else {
+                scrollToTopBtn.classList.remove("show");
+            }
+        }
+    
+        // Function to set the scroll progress on the button ring
+        function setProgress(percent) {
+            const offset = circumference - (percent / 100) * circumference;
+            progressCircle.style.strokeDashoffset = offset;
+        }
+    
+        // Listen for scroll events to update button visibility and progress
+        window.addEventListener("scroll", () => {
+            toggleScrollButton();
+            const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            setProgress(scrollPercent);
+        });
+    
+        // Smooth scroll to top when the button is clicked
+        scrollToTopBtn.addEventListener("click", () => {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        });
+      </script>
+      <div class="gtranslate_wrapper"></div>
+        <script>window.gtranslateSettings = {"default_language":"en","detect_browser_language":true,"wrapper_selector":".gtranslate_wrapper"}</script>
+<script src="https://cdn.gtranslate.net/widgets/latest/float.js" defer></script>
+</body>
+
+
+
+</html>

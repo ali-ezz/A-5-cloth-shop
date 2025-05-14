@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="images/logo1.png" type="image/x-icon">
+    <!-- Changed Title -->
+    <title>5*A - Ecommerce</title>
+    <link rel="stylesheet" href="preloaderStyle.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" herf="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+    <link rel="stylesheet" href="./Style/popup.css">
+
+
+<div class="search-overlay" id="searchOverlay"></div>
+<div class="search-container" id="searchContainer">
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search products, categories...">
+        <button id="closeSearch">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="search-results" id="searchResults"></div>
+</div>
+
+<style>
+.search-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 998;
+    display: none;
+    backdrop-filter: blur(5px);
+}
+
+.search-container {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 800px;
+    background: white;
+    z-index: 999;
+    display: none;
+    padding: 20px;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f5f5f5;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+#searchInput {
+    flex: 1;
+    border: none;
+    background: none;
+    font-size: 16px;
+    outline: none;
+    padding: 5px;
+}
+
+#closeSearch {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: #666;
+    padding: 5px;
+}
+
+.search-results {
+    margin-top: 20px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.search-result-item:hover {
+    background: #f5f5f5;
+}
+
+.search-result-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 15px;
+}
+
+.search-result-info {
+    flex: 1;
+}
+
+.search-result-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.search-result-price {
+    color: #ff3366;
+}
+
+.no-results {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%) translateX(-50%);
+    }
+    to {
+        transform: translateY(0) translateX(-50%);
+    }
+}
+
+.search-container.active {
+    display: block;
+    animation: slideDown 0.3s ease;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchIcon = document.querySelector('.fa-magnifying-glass');
+    const searchOverlay = document.getElementById('searchOverlay');
+    const searchContainer = document.getElementById('searchContainer');
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    const closeSearch = document.getElementById('closeSearch');
+
+    // Function to toggle search
+    function toggleSearch() {
+        const isVisible = searchContainer.classList.contains('active');
+        searchOverlay.style.display = isVisible ? 'none' : 'block';
+        searchContainer.classList.toggle('active');
+        if (!isVisible) {
+            searchInput.focus();
+        }
+    }
+
+    // Open search
+    searchIcon.addEventListener('click', (e) => {
+        e.preventDefault();
+        toggleSearch();
+    });
+
+    // Close search
+    closeSearch.addEventListener('click', toggleSearch);
+    searchOverlay.addEventListener('click', toggleSearch);
+
+    // Search functionality
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase().trim();
+        
+        // Get all products from the page
+        const products = Array.from(document.querySelectorAll('.product')).map(product => ({
+            title: product.querySelector('.product-name').textContent,
+            price: product.querySelector('.product-price').textContent,
+            image: product.querySelector('img').src
+        }));
+
+        // Filter products
+        const filteredProducts = products.filter(product => 
+            product.title.toLowerCase().includes(searchTerm) ||
+            product.price.toLowerCase().includes(searchTerm)
+        );
+
+        // Display results
+        displaySearchResults(filteredProducts, searchTerm);
+    });
+
+    function displaySearchResults(results, searchTerm) {
+        if (searchTerm === '') {
+            searchResults.innerHTML = '';
+            return;
+        }
+
+        if (results.length === 0) {
+            searchResults.innerHTML = `
+                <div class="no-results">
+                    No products found for "${searchTerm}"
+                </div>
+            `;
+            return;
+        }
+
+        searchResults.innerHTML = results.map(product => `
+            <div class="search-result-item">
+                <img src="${product.image}" alt="${product.title}" class="search-result-image">
+                <div class="search-result-info">
+                    <div class="search-result-title">${product.title}</div>
+                    <div class="search-result-price">${product.price}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Close search on ESC key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && searchContainer.classList.contains('active')) {
+            toggleSearch();
+        }
+    });
+});
+</script>
+
+    </style>
+
+<style>
+    
+/* Add these styles to your existing CSS */
+.radio-player {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(45deg, #1e2024, #17181c);
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    z-index: 1000;
+    width: 300px;
+}
+
+.radio-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.radio-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(45deg, #000000, #000000);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.radio-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255,51,102,0.4);
+}
+
+.radio-status {
+    color: #fff;
+    font-size: 0.9em;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.volume-control {
+    flex-grow: 1;
+}
+
+.volume-slider {
+    width: 100%;
+    height: 4px;
+    -webkit-appearance: none;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    outline: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 15px;
+    height: 15px;
+    background: #ff3366;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid white;
+}
+
+.radio-title {
+    color: #ffffff;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+    text-align: center;
+}
+</style>
+
+
+
+<body>
+    <div id="progress-container">
+        <div id="progress-bar"></div>
+    </div>
+
+    <!-- header section -->
+    <header class="header" id="header">
+        <div class="logo">
+            <a href="/" target="_blank"> <img src="images/logo.png" alt="Logo" srcset=""> </a>
+            <i class="fa-solid fa-bars menu" id="menu"></i>
+        </div>
+
+        <nav class="navigation">
+            <div class="pro-tabs-container">
+                <ul id="pro-tabs" class="nav-links">
+                    <!-- Home & General -->
+                    <li class="nav-link border dropdown">
+                        <a class="dropdown-parent">General</a>
+                        <ul class="dropdown-content">
+                            <li><a href="index.html" target="_blank">Home</a></li>
+                            <li><a href="about.html" target="_blank">About</a></li>
+                            <li><a href="contact.html" target="_blank">Contact Us</a></li>
+                            <li><a href="contributors.html" target="_blank">Contributors</a></li>
+                            <li><a href="feedback.html" target="_blank">Feedback</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Products -->
+                    <li class="nav-link border dropdown">
+                        <a class="dropdown-parent">Products</a>
+                        <ul class="dropdown-content">
+                            <li><a href="mens.html" target="_blank">Men's</a></li>
+                            <li><a href="child.html" target="_blank">Kid Section</a></li>
+                            <li><a href="accessories.html" target="_blank">Accessories</a></li>
+                            <li><a href="shopclothing.html" target="_blank">Shop Clothing</a></li>
+                            <li><a href="sneaker.html" target="_blank">Sneakers</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Policies & Information -->
+                    <li class="nav-link border dropdown">
+                        <a class="dropdown-parent">Policies</a>
+                        <ul class="dropdown-content">
+                            <li><a href="terms-conditions.html" target="_blank">Terms & Conditions</a></li>
+                            <li><a href="privacy.html" target="_blank">Privacy</a></li>
+                            <li><a href="return-policy.html" target="_blank">Return Policy</a></li>
+                            <li><a href="features.html" target="_blank">Features</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- User & Orders -->
+                    <li class="nav-link border dropdown">
+                        <a class="dropdown-parent">User & Orders</a>
+                        <ul class="dropdown-content">
+                            <li><a href="login-sginup.html" target="_blank">Login/Signup</a></li>
+                            <li><a href="cart.html" target="_blank">Cart</a></li>
+                            <li><a href="ordertt.html" target="_blank">Order</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Miscellaneous -->
+                    <li class="nav-link border dropdown">
+                        <a class="dropdown-parent">Miscellaneous</a>
+                        <ul class="dropdown-content">
+                            <li><a href="ai5.html" target="_blank">AI5</a></li>
+                            <li><a href="todo.html" target="_blank">ToDo</a></li>
+                            <li><a href="faq.html" target="_blank">Faq</a></li>
+                            <li><a href="Boy.html" target="_blank">Boy</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+<nav class="utils">
+    <ul class="nav-links">
+        <li class="nav-link">
+            <a href="cart.html" target="_blank">
+                <i class="fa-solid fa-cart-shopping" id="cart-icon"></i>
+            </a>
+        </li>
+        <li class="nav-link">
+            <a href="login-signup.html" target="_blank">
+                <i class="fa-solid fa-user"></i>
+            </a>
+        </li>
+        <li class="nav-link">
+            <a href="search.html" target="_blank">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+    </header>
+</body>
+<body>
+
+
+    <!--  radio player div -->
+    <div class="radio-player">
+        <div class="radio-title">HiLive Relax Radio</div>
+        <div class="radio-status" id="radioStatus">Radio is stopped</div>
+        <div class="radio-controls">
+            <button class="radio-btn" id="playPauseBtn">
+                <i class="fas fa-play"></i>
+            </button>
+            <div class="volume-control">
+                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.1" value="0.5">
+            </div>
+            <button class="radio-btn" id="muteBtn">
+                <i class="fas fa-volume-up"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+    // Add this JavaScript
+    document.addEventListener('DOMContentLoaded', function() {
+        const audio = new Audio('https://ec4.yesstreaming.net:1465/stream');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const muteBtn = document.getElementById('muteBtn');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const radioStatus = document.getElementById('radioStatus');
+        let isPlaying = false;
+        let isMuted = false;
+
+        // Set initial volume
+        audio.volume = volumeSlider.value;
+
+        // Play/Pause button
+        playPauseBtn.addEventListener('click', () => {
+            if (!isPlaying) {
+                audio.play();
+                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                radioStatus.textContent = 'Now Playing: HiLive Relax';
+                isPlaying = true;
+            } else {
+                audio.pause();
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                radioStatus.textContent = 'Radio is stopped';
+                isPlaying = false;
+            }
+        });
+
+        // Mute button
+        muteBtn.addEventListener('click', () => {
+            isMuted = !isMuted;
+            audio.muted = isMuted;
+            muteBtn.innerHTML = isMuted ? 
+                '<i class="fas fa-volume-mute"></i>' : 
+                '<i class="fas fa-volume-up"></i>';
+        });
+
+        // Volume slider
+        volumeSlider.addEventListener('input', (e) => {
+            audio.volume = e.target.value;
+            if (audio.volume > 0) {
+                isMuted = false;
+                muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+            }
+        });
+
+        // Error handling
+        audio.addEventListener('error', () => {
+            radioStatus.textContent = 'Error: Unable to play stream';
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            isPlaying = false;
+        });
+
+        // Update status when stream is loaded
+        audio.addEventListener('loadeddata', () => {
+            if (isPlaying) {
+                radioStatus.textContent = 'Now Playing: HiLive Relax';
+            }
+        });
+    });
+    </script>
+</body>
+
+
+    <!-- Search Bar -->
+    <div id="search-bar">
+        <input type=" text " id=" search " placeholder=" Search..." />
+        <button type="submit" id="search-btn">Go</button> <!-- Add ID to the button -->
+    </div>
+    <script src=" preloader.js "></script>
+    <style>
+    /* Style for the search bar, initially hidden */
+    #search-bar {
+        display: none;
+        position: absolute;
+        top: 60px; /* Adjust this to position the search bar just below the icon */
+        right: 20px; /* Align with the icon */
+        background-color: white;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+        background-color: #ffffff;
+        color: #000000;
+    }
+    .dark-theme {
+        background-color: #1a1a1a;
+        color: #ffffff;
+    }
+
+
+    /* Css for language box */
+    .lang-box{
+        align-items: center;
+        margin-top: auto;
+        margin-bottom: auto;
+    }
+    .hidden{
+        display: none;
+    }
+
+    /* Default (Light Mode) */
+    .theme-icon {
+        color: #000000; /* Light mode icon color */
+    }
+
+    /* Dark Mode */
+    .dark-theme .theme-icon {
+        color: #ffffff; /* Dark mode icon color */
+    }
+
+    /* Styling the input box and button */
+    #search-bar input {
+        padding:  5px;
+        width:  200px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        outline: none;
+    }
+
+    #search-bar button {
+        padding: 5px 10px;
+        background-color:black;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+    #search-bar button:hover {
+        background-color:black;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        // Get the search icon and search bar elements
+        const searchIcon = document.getElementById("search-icon");
+        const searchBar = document.getElementById("search-bar");
+
+        // Toggle the visibility of the search bar when the icon is clicked
+        searchIcon.onclick = function() {
+            if (searchBar.style.display === "none" || searchBar.style.display === "") {
+                searchBar.style.display = "block";  // Show the search bar
+                searchBar.querySelector('input').focus(); // Automatically focus on the input field
+            } else {
+                searchBar.style.display = "none";  // Hide the search bar
+            }
+        }
+
+        // Search button functionality
+        const searchBtn = document.getElementById("search-btn");
+        searchBtn.onclick = function() {
+            var query = document.getElementById('search').value;
+            if(query) {
+                console.log("Search query:", query);
+                // Implement your search logic here, such as a redirect or an API call
+                // window.location.href = '/search-results?q=' + encodeURIComponent(query);
+
+                // Hide the search bar after clicking "Go"
+                searchBar.style.display = "none";
+            } else {
+                console.log("No search query entered");
+            }
+        }
+        const toggleBtn = document.getElementById("modeToggle")
+        toggleBtn.onclick = () => {
+            const sun = document.querySelector(".sun-icon")
+            const moon = document.querySelector(".moon-icon")
+            //moon.style.display = "grid";
+            sun.classList.toggle("hidden");
+            moon.classList.toggle("hidden");
+
+            document.body.classList.toggle("dark-theme");
+        }
+    });
+</script>
+ <!-- banner area  -->
+    <section class="banner">
+
+        <div class="slide">
+
+            <div class="slide-details" data-aos="fade-up" data-aos-easing="ease-in-out">
+                <!-- Changed Heading -->
+                <h1><p>Discover Tomorrow's Trends Today with 5*A!</p></h1>
+                <!-- Changed Paragraph -->
+                <p>
+                    At 5*A, we bring you the most stylish and trendy fashion items, all in one place!
+                </p>
+                <button class="btn">
+                    Explore More
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pop up Html  -->
+         <!-- Pop-up for email registration -->
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <div class="popup-left">
+                <img src="images/popup1.jpg" alt="Fashion Image">
+            </div>
+            <div class="popup-right">
+                <!-- Make sure to replace images/logo.png with your 5*A logo -->
+                <a href="#" class="no-thanks"><img class="popuplogo" src="images/logo.png" alt="Logo" srcset=""></a>
+                <!-- Changed Heading -->
+                <h1>Join 5*A!</h1>
+
+                <h2 class="popuph2">Unlock Your Fashion</h2>
+                <p>Sign up now to enjoy <strong> 20% off </strong> your first order and exclusive updates on the latest trends.</p>
+                <form id="emailForm">
+                    <input type="email" id="popup-email" placeholder="Enter your email" required>
+                    <button type="submit" class="signup-btn">Continue</button>
+                </form>
+                <a href="#" class="no-thanks close-btn">No thanks, I’ll shop full price</a>
+                <p class="terms">By signing up, you agree to our <a href="terms-conditions.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a>.</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- featured section  -->
+
+    <section class="featured" data-aos="fade-left" data-aos-delay="300">
+        <div class="featured-box-1">
+            <div class="overlay">
+                <a href="./shopclothing.html" class="btn btn-white">
+                    Shop Clothing
+                </button></a>
+            </div>
+            <div class="bg-image">
+                <img src="./images/youngcouple1.jpg" alt="product">
+            </div>
+        </div>
+
+        <div class="featured-box-2">
+            <div class="featured-box-2-box-1">
+                <div class="overlay">
+                    <a href="./products/sunglasses.html" class="btn btn-white">
+                        Shop Sunglasses
+                    </a>
+                </div>
+                <div class="bg-image">
+                    <img src="./images/shop-glasses.webp" alt="product">
+                </div>
+            </div>
+            <div class="featured-box-2-box-2">
+                <div class="overlay">
+                    <a href="./products/bags.html" class="btn btn-white">
+                        Shop Bags
+                    </a>
+                </div>
+                <div class="bg-image">
+                    <img src="./images/shop-bags.webp" alt="product">
+                </div>
+            </div>
+
+            <div class="featured-box-2-box-3">
+                <div class="overlay">
+                    <a href="./products/sandals.html" class="btn btn-white">
+                        Shop Sandals
+                    </a>
+                </div>
+                <div class="bg-image">
+                    <img src="./images/shop-sandals.webp" alt="product">
+                </div>
+            </div>
+        </div>
+
+        <div class="featured-box-3">
+            <div class="overlay">
+                <a href="sneaker.html" class="btn btn-white">
+                    Shop Sneakers
+                </a>
+
+            </div>
+            <div class="bg-image">
+                <img src="./images/shop-sneakers.webp" alt="product">
+            </div>
+        </div>
+    </section>
+
+
+    <!-- products section  -->
+
+    <section class="products">
+        <h1 class="section-title">Top Products Of The Season!</h1>
+
+        <div class="products-list">
+
+            <div class="product" data-aos="fade-up" data-aos-delay="200">
+                <div class="product-image">
+                    <div class="main-image">
+                        <img src="./images/blackstrippedmaneffectimage.jpg" alt="product">
+                    </div>
+                    <div class="effect-image">
+                        <img src="./images/blackstrippedmannormal.jpeg" alt="product">
+                    </div>
+                    <div class="overlay-image">
+                        <button class="heartbtn" id="heart">
+                            ❤
+                        </button>
+                    </div>
+
+                </div>
+
+                <div class="product-details">
+                    <p class="product-name">Black Striped Shirt</p>
+                    <p class="product-price">- $199</p>
+                </div>
+
+            </div>
+
+            <div class="product" data-aos="fade-up" data-aos-delay="200">
+
+                <div class="product-image">
+
+                    <div class="main-image">
+                        <img src="./images/product2.jpg" alt="product">
+                    </div>
+                    <div class="effect-image">
+                        <img src="./images/product2-effect.jpg" alt="product">
+                    </div>
+                    <div class="overlay-image">
+                        <button class="heartbtn" id="heart">
+                            ❤
+                        </button>
+                    </div>
+
+
+                </div>
+
+                <div class="product-details">
+                    <p class="product-name">Black Top</p>
+                    <p class="product-price">- $99</p>
+                </div>
+
+            </div>
+
+
+            <div class="product" data-aos="fade-up" data-aos-delay="200">
+
+                <div class="product-image">
+
+                    <div class="main-image">
+                        <img src="./images/product3-effect.jpg" alt="product">
+                    </div>
+                    <div class="effect-image">
+                        <img src="./images/product3.webp" alt="product">
+                    </div>
+                    <div class="overlay-image">
+                        <button class="heartbtn" id="heart">
+                            ❤
+                        </button>
+                    </div>
+
+
+                </div>
+
+                <div class="product-details">
+                    <p class="product-name">Olive Green Top</p>
+                    <p class="product-price">- $100</p>
+                </div>
+
+            </div>
+
+            <div class="product" data-aos="fade-up" data-aos-delay="200">
+
+                <div class="product-image">
+
+                    <div class="main-image">
+                        <img src="./images/whitetshirtmen.jpeg" alt="product">
+                    </div>
+                    <div class="effect-image">
+                        <img src="./images/whitetshirtmeneffect.jpeg" alt="product">
+                    </div>
+                    <div class="overlay-image">
+                        <button class="heartbtn" id="heart">
+                            ❤
+                        </button>
+                    </div>
+
+
+                </div>
+
+                <div class="product-details">
+                    <p class="product-name">White T-shirt</p>
+                    <p class="product-price">- $100</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- category section  -->
+
+    <section class="categories">
+
+        <div class="category" data-aos="zoom-in" data-aos-delay="200">
+
+            <div class="cat-img">
+                <img src="./images/category1.webp" alt="category">
+            </div>
+
+            <div class="product-details">
+                <p class="product-name">Night Suits</p>
+            </div>
+
+        </div>
+
+        <div class="category" data-aos="zoom-in" data-aos-delay="200">
+
+            <div class="cat-img">
+                <img src="./images/category2.webp" alt="category">
+            </div>
+
+            <div class="product-details">
+                <p class="product-name">Hand Bags</p>
+            </div>
+        </div>
+
+        <div class="category" data-aos="zoom-in" data-aos-delay="200">
+            <div class="cat-img">
+                <img src="./images/category3.webp" alt="category">
+            </div>
+            <div class="product-details">
+                <p class="product-name">Funky Tops</p>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- products section 2 -->
+    <section class="products">
+        <h1 class="section-title">Most Bought Products Of The Month!</h1>
+
+        <div class="products-list">
+
+            <div class="product" data-aos="fade-up" data-aos-delay="200">
+
+                <div class="product-image">
+
+                    <div class="main-image">
+                        <img src="./images/product5.jpg" alt="product">
+                    </div>
+                    <div class="effect-image">
+                        <img src="./images/product5-effect.jpg" alt="product">
+                    </div>
+                    <div class="overlay-image">
+                        <button class="heartbtn" id="heart">
+                            ❤
+                        </button>
+                    </div>
+                </div>
+
+                <div class="product-details">
+                    <p class="product-name">Black Top</p>
+                    <p class="product-price">- $100</p>
+                </div>
+            </div>
+
+            <div class="product" data-aos="fade-up" data-aos-delay="200">
+
+                <div class="product-image">
+
+                    <div class="main-image">
+                        <img src="./images/product6.jpg" alt="product">
+                    </div>
+                    <div class="effect-image">
+                        <img src="./images/product6-effect.jpg" alt="product">
+                    </div>
+                    <div class="overlay-image">
+                        <button class="heartbtn" id="heart">
+                            ❤
+                        </button>
+                    </div>
+                </div>
+
+                <div class="product-details">
+                    <p class="product-name">Red Top</p>
+                    <p class="product-price">- $100</p>
+                </div>
+
+            </div>
+
+            <div class="product" data-aos="fade-up" data-aos-delay="200">
+
+                <div class="product-image">
+                    <div class="main-image">
+                        <img src="./images/tealimageshirtmen.jpeg" alt="product">
+                    </div>
+                    <div class="effect-image">
+                        <img src="./images/tealshirtmeneffect.jpeg" alt="product">
+                    </div>
+                    <div class="overlay-image">
+                        <button class="heartbtn" id="heart">
+                            ❤
+                        </button>
+                    </div>
+                </div>
+
+                <div class="product-details">
+                    <p class="product-name">Light Teal Shirt</p>
+                    <p class="product-price">- $199</p>
+                </div>
+            </div>
+
+            <div class="product" data-aos="fade-up" data-aos-delay="200">
+
+                <div class="product-image">
+                    <div class="main-image">
+                        <img src="./images/product8.jpg" alt="product">
+                    </div>
+                    <div class="effect-image">
+                        <img src="./images/product8-effect.jpg" alt="product">
+                    </div>
+                    <div class="overlay-image">
+                        <button class="heartbtn" id="heart">
+                            ❤
+                        </button>
+                    </div>
+                </div>
+                <div class="product-details">
+                    <p class="product-name">Black Top</p>
+                    <p class="product-price">- $399</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- shop from insta section  -->
+
+    <section class="insta">
+        <h1 class="section-title">Shop From The Gram</h1>
+
+        <div class="posts">
+            <div class="post-image" data-aos="zoom-in" data-aos-delay="200">
+                <i class="fa-brands fa-instagram"></i>
+                <img src="./images/insta1.webp" alt="insta">
+            </div>
+            <div class="post-image" data-aos="zoom-in" data-aos-delay="200">
+                <i class="fa-brands fa-instagram"></i>
+                <img src="./images/insta2.webp" alt="insta">
+            </div>
+            <div class="post-image" data-aos="zoom-in" data-aos-delay="200">
+                <i class="fa-brands fa-instagram"></i>
+                <img src="./images/insta3.webp" alt="insta">
+            </div>
+            <div class="post-image" data-aos="zoom-in" data-aos-delay="200">
+                <i class="fa-brands fa-instagram"></i>
+                <img src="./images/insta4.webp" alt="insta">
+            </div>
+            <div class="post-image" data-aos="zoom-in" data-aos-delay="200">
+                <i class="fa-brands fa-instagram"></i>
+                <img src="./images/insta5.webp" alt="insta">
+            </div>
+            <div class="post-image" data-aos="zoom-in" data-aos-delay="200">
+                <i class="fa-brands fa-instagram"></i>
+                <img src="./images/insta6.webp" alt="insta">
+            </div>
+        </div>
+        <div class="feedback-container">
+
+            <h2>Have feedback? <a href="feedback.html" target="_blank"><span>Click here</span></a> to share your thoughts with us.</h2>
+        </div>
+    </section>
+
+ <footer class="footer">
+
+        <div class="footer-section">
+            <h1>Contact Us</h1>
+            <ul class="footer-list">
+                <li><a href="Ahmedbakr@internet.ru">Ahmedbakr@internet.ru</a></li>
+                <li>2nd Floor,cairo ,Egypt</li>
+                <li><a href="tel:+91xxxxxxxx2020">+20 1234567</a></li>
+                <li class="border-list"></li>
+                <li class="socials">
+                    <a href="https://vk.link/hioffce" id="linkedin" target="_blank">
+                        <i class="fa-brands fa-linkedin"></i>
+                    </a>
+                    <a href="https://vk.link/hioffce" id="github"target="_blank">
+                        <i class="fa-brands fa-github"></i>
+                    </a>
+                    <a href="https://vk.link/hioffce" id="twitter"target="_blank">
+                        <i class="fa-brands fa-x-twitter"></i>
+                    </a>
+                    <a href="https://vk.link/hioffce" id="instagram"target="_blank">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="footer-section quick-links">
+            <h1>Quick Links</h1>
+            <ul class="footer-list">
+                <li><a href="about.html"><i class="fas fa-info-circle"></i> About Us</a></li>
+  <li><a href="contributors.html"><i class="fas fa-users"></i> Our Contributors</a></li>
+  <li><a href="terms-conditions.html"><i class="fas fa-file-contract"></i> Terms & Conditions</a></li>
+  <li><a href="shopclothing.html"><i class="fas fa-undo-alt"></i>shopclothing</a></li>
+  <li><a href="https://vk.link/hioffce" target="_blank"><i class="fab fa-github"></i> Star Us</a></li>
+  <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact Us</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h1>Subscribe to Newsletter</h1>
+            <ul class="footer-list">
+                <li>Maxime quae inventore sunt odio perspiciatis vitae saepe officia dolorem.</li>
+                <li class="sub">
+                    <input type="text" placeholder="Enter your email">
+                    <button class="btn">Subscribe</button>
+                </li>
+            </ul>
+        </div>
+    </footer>
+
+    <!-- <a class="gotopbtn" href="#"><i class="fas fa-arrow-up"></i></a> -->
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script>
+  AOS.init();
+
+  (function() {
+      let headerVisible = false;
+      document.getElementById("menu").addEventListener("click", function () {
+          if (headerVisible === false) {
+              document.getElementById("header").style.height = "290px";
+              headerVisible = true;
+          } else {
+              document.getElementById("header").style.height = "50px";
+              headerVisible = false;
+          }
+      });
+
+      // Show "Go to Top" button after scrolling down
+      const goTopBtn = document.querySelector(".gotopbtn");
+      window.addEventListener("scroll", function () {
+          if (window.scrollY > 300) {  // Show the button after scrolling down 200px
+              goTopBtn.style.display = "block";
+          } else {
+              goTopBtn.style.display = "none";
+          }
+      });
+
+  })();
+  </script>
+    <script src="preloader.js"></script>
+    <script src="preloader.js"></script>
+    <script>
+        function handleSubmit(event) {
+            event.preventDefault(); 
+            const feedbackMessage = document.getElementById("feedbackMessage");
+            feedbackMessage.style.display = "block"; 
+
+            document.getElementById("feedbackForm").reset();
+        }
+    </script>
+
+    <button id="scrollToTopBtn" class="scroll-top" aria-label="Scroll to top">
+        <div class="scroll-top-icon">
+            <i class="fa-solid fa-arrow-up"></i>
+        </div>
+        <svg class="progress-ring" width="60" height="60">
+            <circle class="progress-ring__circle" stroke="#ffffff" stroke-width="4" fill="transparent" r="28" cx="30"
+                cy="30"></circle>
+        </svg>
+    </button>
+    <style>
+        .scroll-top {
+            position: fixed;
+            right: 1.6%;
+            background: linear-gradient(100deg, #1ca6f0, #3c7aff, #05deff);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 69, 159, 0.4);
+            overflow: visible;
+            z-index: 10;
+            bottom: 15px;
+            /* Ensure button is on top */
+        }
+    
+        .scroll-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+    
+        .scroll-top:hover {
+            transform: scale(1.1);
+            /* Subtle scaling instead of expanding */
+            box-shadow: 0 8px 20px rgba(255, 69, 159, 0.6);
+            /* Slightly larger shadow */
+        }
+    
+        .scroll-top:active {
+            transform: scale(1.05);
+            /* Minor scale reduction on click */
+        }
+    
+        .scroll-top-icon {
+            position: relative;
+            z-index: 2;
+            transition: transform 0.3s ease;
+        }
+    
+        .scroll-top:hover .scroll-top-icon {
+            transform: translateY(-3px);
+        }
+    
+        /* Progress Ring Styling */
+        .progress-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+            /* To start from the top */
+        }
+    
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform-origin: 50% 50%;
+        }
+    
+        /* Pulse Animation */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 5px 15px rgba(255, 69, 159, 0.4);
+            }
+    
+            50% {
+                box-shadow: 0 5px 15px rgba(255, 69, 159, 0.7);
+            }
+    
+            100% {
+                box-shadow: 0 5px 15px rgba(255, 69, 159, 0.4);
+            }
+        }
+    
+        .scroll-top:hover {
+            animation: pulse 1.5s infinite;
+        }
+    
+        .scroll-top.show {
+            animation: none;
+            /* No animation when showing the button */
+        }
+    
+        .scroll-top.show:hover {
+            animation: pulse 1.5s infinite;
+            /* Pulse on hover */
+        }
+    </style>
+    <script>
+        // Get the button
+        const scrollToTopBtn = document.getElementById("scrollToTopBtn");
+        const progressCircle = document.querySelector(".progress-ring__circle");
+        const radius = progressCircle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+    
+        // Set the circle progress properties
+        progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+        progressCircle.style.strokeDashoffset = circumference;
+    
+        // Function to show or hide the button based on scroll position
+        function toggleScrollButton() {
+            if (window.scrollY > 100) {
+                scrollToTopBtn.classList.add("show");
+            } else {
+                scrollToTopBtn.classList.remove("show");
+            }
+        }
+    
+        // Function to set the scroll progress on the button ring
+        function setProgress(percent) {
+            const offset = circumference - (percent / 100) * circumference;
+            progressCircle.style.strokeDashoffset = offset;
+        }
+    
+        // Listen for scroll events to update button visibility and progress
+        window.addEventListener("scroll", () => {
+            toggleScrollButton();
+            const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            setProgress(scrollPercent);
+        });
+    
+        // Smooth scroll to top when the button is clicked
+        scrollToTopBtn.addEventListener("click", () => {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        });
+      </script>
+      <div class="gtranslate_wrapper"></div>
+        <script>window.gtranslateSettings = {"default_language":"en","detect_browser_language":true,"wrapper_selector":".gtranslate_wrapper"}</script>
+<script src="https://cdn.gtranslate.net/widgets/latest/float.js" defer></script>
+</body>
+
+
+
+</html>
