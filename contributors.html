@@ -223,7 +223,9 @@ const goTopBtn = document.querySelector('.go-top-btn');
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <h1 id="heroTitle">Our Amazing Contributors</h1>
-            <p id="heroSubtitle">Shaping the future of StationGuide, one commit at a time</p>
+            <p id="heroSubtitle">We are the best, and the rest are mere mist.
+
+</p>
             <a href="#contribute" class="cta-button">Become a Contributor</a>
         </div>
     </section>
@@ -281,17 +283,56 @@ const goTopBtn = document.querySelector('.go-top-btn');
         <p>Page Views: <span id="page-views">0</span></p>
     </div>
 
-    <div class="name-list">
-        <h2>Names</h2>
-        <ul>
-            <li>Ali</li>
-            <li>Ahmed Abo Bakr</li>
-            <li>Ahmed Sameh</li>
-            <li>Ahmed Sabery</li>
-            <li>abdrhamn khaled</li>
+<div class="name-list">
+    <h2>Names</h2>
+    <ul>
+        <li>
+            <img src="images/Me.png" alt="Ali's profile picture" class="profile-img">
+            <span>Ali</span>
+        </li>
+        <li>
+            <img src="images/Ahmed-abo.jpg" alt="Ahmed Abo Bakr's profile picture" class="profile-img">
+            <span>Ahmed Abo Bakr</span>
+        </li>
+        <li>
+            <img src="images/Ahmed-samh .jpg" alt="Ahmed Sameh's profile picture" class="profile-img">
+            <span>Ahmed Sameh</span>
+        </li>
+        <li>
+            <img src="images/Ahmed-sab.jpeg" alt="Ahmed Sabery's profile picture" class="profile-img">
+            <span>Ahmed Sabery</span>
+        </li>
+        <li>
+            <img src="images/Legasy.jpg" alt="Abdrhamn Khaled's profile picture" class="profile-img">
+            <span>Abdrhamn Khaled</span>
+        </li>
+    </ul>
+</div>
 
-        </ul>
-    </div>
+<style>
+.name-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.name-list li {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+    padding: 8px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+}
+
+.profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
+</style>
 
     <script>
         // Simulate fetching GitHub stars
