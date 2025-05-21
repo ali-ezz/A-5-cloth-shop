@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Tracking - 5*A</title>
+    <link rel="shortcut icon" href="images/logo1.png" type="image/x-icon">
+    <link rel="stylesheet" href="preloaderStyle.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./Style/popup.css">
+
+    <style>
+        /* General Body Styles (from previous standardization) */
+        body { font-family: Arial, sans-serif; background-color: #f7f7f7; margin: 0; padding: 0; padding-top: 70px; display: flex; flex-direction: column; min-height: 100vh; color: #333; transition: background-color 0.3s ease, color 0.3s ease; }
+        main { flex-grow: 1; padding: 20px; }
+        body.dark-theme { background-color: #1a1a1a; color: #f1f1f1; }
+        body.dark-theme h1, body.dark-theme h2, body.dark-theme h3, body.dark-theme h4 { color: #f1f1f1; }
+        body.dark-theme .order-tracking-container, body.dark-theme .order-status-card { background-color: #23272a; box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1); }
+        body.dark-theme .order-tracking-form input[type="text"], body.dark-theme .order-tracking-form input[type="email"] { background-color: #2c3034; border-color: #4f545c; color: #f1f1f1; }
+        body.dark-theme .order-tracking-form button { background-color: #7289da; }
+        body.dark-theme .order-tracking-form button:hover { background-color: #5f73bc; }
+        body.dark-theme .order-status-card h3 { border-bottom-color: #4f545c; }
+        body.dark-theme .status-timeline .timeline-item .timeline-icon { background-color: #7289da; border-color: #23272a; }
+        body.dark-theme .status-timeline .timeline-item.completed .timeline-icon { background-color: #43b581; }
+        body.dark-theme .status-timeline .timeline-item.pending .timeline-icon { background-color: #faa61a; }
+        body.dark-theme .status-timeline .timeline-line { background-color: #4f545c; }
+        body.dark-theme .timeline-content { background-color: #2c3034; border-left: 3px solid #7289da; }
+        body.dark-theme .order-details-table th { background-color: #2a2e33; }
+        body.dark-theme .order-details-table td, body.dark-theme .order-details-table th { border-color: #4f545c; }
+        body.dark-theme .empty-state p { color: #99aab5; }
+        body.dark-theme .fake-counter-section { background-color: #2c3034; }
+        body.dark-theme .fake-counter-section p { color: #7289da; }
+        body.dark-theme .map-container { border-color: #4f545c; }
+
+        /* Order Tracking Page Styles - Enhanced */
+        .order-tracking-container { max-width: 850px; margin: 30px auto; padding: 25px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); }
+        .order-tracking-container h1 { text-align: center; font-size: 2.3em; margin-bottom: 30px; font-weight: 700; color: #007bff; }
+        body.dark-theme .order-tracking-container h1 { color: #7289da; }
+
+        .order-tracking-form { display: flex; flex-direction: column; gap: 18px; margin-bottom: 35px; }
+        .order-tracking-form label { font-weight: 500; margin-bottom: 6px; font-size: 0.9em; color: #4A5568; }
+        body.dark-theme .order-tracking-form label { color: #A0AEC0; }
+        .order-tracking-form input[type="text"], .order-tracking-form input[type="email"] { padding: 12px 15px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 1em; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+        .order-tracking-form input:focus { border-color: #4A90E2; outline: none; box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3); }
+        .order-tracking-form button { background-color: #007bff; color: white; padding: 12px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 1.05em; font-weight: 600; transition: background-color 0.2s ease, transform 0.1s ease; }
+        .order-tracking-form button:hover { background-color: #0056b3; transform: translateY(-1px); }
+        .order-tracking-form button:active { transform: translateY(0px); }
+
+        .order-status-card { margin-top: 30px; padding: 30px; background-color: #fff; border-radius: 10px; box-shadow: 0 3px 15px rgba(0,0,0,0.07); display: none; }
+        .order-status-card h3 { font-size: 1.8em; margin-bottom: 20px; color: #333; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; }
+        body.dark-theme .order-status-card h3 { border-bottom-color: #444; }
+
+        .order-summary-brief { margin-bottom: 25px; line-height: 1.7; }
+        .order-summary-brief p { margin: 8px 0; font-size: 1em; }
+        .order-summary-brief strong { font-weight: 600; color: #2d3748; }
+        body.dark-theme .order-summary-brief strong { color: #e2e8f0; }
+        .order-summary-brief #currentStatus { font-weight: bold; padding: 3px 8px; border-radius: 4px; display: inline-block; }
+        .status-shipped { background-color: #3498db; color: white; }
+        .status-processing { background-color: #f1c40f; color: #333; }
+        .status-delivered { background-color: #2ecc71; color: white; }
+        .status-pending { background-color: #e67e22; color: white; }
+        .status-cancelled { background-color: #e74c3c; color: white; }
+        body.dark-theme .status-shipped { background-color: #5865f2; }
+        body.dark-theme .status-processing { background-color: #faa61a; }
+        body.dark-theme .status-delivered { background-color: #43b581; }
+        body.dark-theme .status-pending { background-color: #e98e36; }
+        body.dark-theme .status-cancelled { background-color: #ed4245; }
+
+        .status-timeline { position: relative; margin: 30px 0; padding-left: 15px; }
+        .status-timeline::before { content: ''; position: absolute; left: 10px; top: 5px; bottom: 5px; width: 4px; background-color: #e2e8f0; border-radius: 2px; }
+        body.dark-theme .status-timeline::before { background-color: #4f545c; }
+
+        .timeline-item { position: relative; margin-bottom: 30px; padding-left: 35px; }
+        .timeline-icon { position: absolute; left: 0px; top: 0px; width: 24px; height: 24px; border-radius: 50%; background-color: #cbd5e0; border: 3px solid #fff; display: flex; align-items: center; justify-content: center; color: white; z-index: 1; font-size: 0.8em; }
+        body.dark-theme .timeline-icon { border-color: #2c3034; }
+        .timeline-item.completed .timeline-icon { background-color: #28a745; }
+        .timeline-item.pending .timeline-icon { background-color: #ffc107; }
+        .timeline-item.current .timeline-icon { background-color: #007bff; animation: pulse-blue 2s infinite; }
+        body.dark-theme .timeline-item.current .timeline-icon { background-color: #7289da; }
+
+        @keyframes pulse-blue { 0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(0, 123, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); } }
+        body.dark-theme @keyframes pulse-blue { 0% { box-shadow: 0 0 0 0 rgba(114, 137, 218, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(114, 137, 218, 0); } 100% { box-shadow: 0 0 0 0 rgba(114, 137, 218, 0); } }
+
+        .timeline-content { background-color: #f9f9f9; padding: 15px; border-radius: 6px; border-left: 3px solid #007bff; position: relative; }
+        .timeline-content h4 { font-size: 1.05em; margin: 0 0 8px; font-weight: 600; color: #333; }
+        .timeline-content p { font-size: 0.9em; margin: 0; color: #555; }
+        .timeline-content .time { font-size: 0.8em; color: #777; display: block; margin-top: 5px; }
+        body.dark-theme .timeline-content .time { color: #99aab5; }
+
+        .order-details-section h4 { font-size: 1.4em; margin-top: 30px; margin-bottom: 15px; color: #333; }
+        .order-details-table { width: 100%; margin-top: 10px; border-collapse: collapse; }
+        .order-details-table th, .order-details-table td { border: 1px solid #e2e8f0; padding: 12px; text-align: left; font-size: 0.95em; }
+        .order-details-table th { background-color: #edf2f7; font-weight: 600; }
+        .order-details-table img { width: 60px; height: auto; border-radius: 4px; margin-right: 10px; vertical-align: middle; }
+        .order-details-table .item-name-cell { display: flex; align-items: center; }
+        #orderTotalValue { font-weight: bold; }
+
+        .map-container { margin-top: 30px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
+        .map-container iframe { width: 100%; height: 350px; border: none; }
+
+        .empty-state p { text-align: center; font-size: 1.1em; color: #777; margin-top: 20px; padding: 20px; background-color: #f9f9f9; border-radius: 8px; }
+        body.dark-theme .empty-state p { background-color: #2c3034; }
+
+        .fake-counter-section { text-align: center; margin: 40px 0; padding: 25px; background-color: #e9ecef; border-radius: 8px; }
+        .fake-counter-section h3 { margin-bottom: 10px; font-size: 1.6em; }
+        .fake-counter-section p { font-size: 2em; font-weight: 700; color: #007bff; }
+
+        /* Standardized CSS (Header, Footer, Common Elements) */
+        .header { background-color: #ffffff; position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; padding: 10px 2%; height: 70px; transition: background-color 0.3s ease, box-shadow 0.3s ease; }
+        body.dark-theme .header { background-color: #1f1f1f; box-shadow: 0 2px 5px rgba(255,255,255,0.1); }
+        .tabs-container { display: flex; align-items: center; overflow-x: auto; }
+        .tabs { list-style: none; padding: 0; margin: 0; display: flex; position: relative; white-space: nowrap; }
+        .tab { margin: 0 10px; position: relative; flex-shrink: 0; }
+        .tab a { text-decoration: none; color: #333; padding: 10px 5px; display: block; position: relative; transition: color 0.3s ease; font-weight: 500; }
+        body.dark-theme .tab a { color: #f1f1f1; }
+        body.dark-theme .tab a.active { color: #4ca1ff; }
+        .cursor { position: absolute; bottom: 0; left: 0; height: 3px; background-color: #007bff; border-radius: 2px; opacity: 0; transition: left 0.3s ease, width 0.3s ease, opacity 0.3s ease; pointer-events: none; }
+        body.dark-theme .cursor { background-color: #4ca1ff; }
+        .tab:hover .cursor, .tab a.active + .cursor { opacity: 1; }
+        .dropdown-content { display: none; position: absolute; background-color: #fff; min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; list-style: none; padding: 0; margin-top: 5px; border-radius: 4px; }
+        body.dark-theme .dropdown-content { background-color: #333; box-shadow: 0px 8px 16px 0px rgba(255,255,255,0.1); }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropdown-content li a { padding: 12px 16px; display: block; color: #333; font-weight: normal; }
+        body.dark-theme .dropdown-content li a { color: #f1f1f1; }
+        .dropdown-content li a:hover { background-color: #f1f1f1; }
+        body.dark-theme .dropdown-content li a:hover { background-color: #444; }
+        .utils { display: flex; align-items: center; }
+        .utils .nav-links { list-style: none; padding: 0; margin: 0; display: flex; align-items: center; gap: 15px; }
+        .utils .nav-link i, .utils .nav-link a > i { font-size: 1.2em; cursor: pointer; color: #333; transition: color 0.3s ease; }
+        body.dark-theme .utils .nav-link i, body.dark-theme .utils .nav-link a > i { color: #f1f1f1; }
+        .utils .nav-link i:hover, .utils .nav-link a:hover > i { color: #007bff; }
+        body.dark-theme .utils .nav-link i:hover, body.dark-theme .utils .nav-link a:hover > i { color: #4ca1ff; }
+        .mode-toggle { background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; }
+        .mode-toggle img { width: 24px; height: 24px; }
+        .hidden { display: none; }
+        #search-bar { display: none; position: absolute; top: 65px; right: 20px; background-color: white; padding: 10px; border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); z-index: 1002; }
+        body.dark-theme #search-bar { background-color: #333; box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1); }
+        #search-bar input { padding: 5px 8px; width: 200px; border: 1px solid #ccc; border-radius: 3px; outline: none; }
+        body.dark-theme #search-bar input { background-color: #444; border-color: #555; color: #eee; }
+        #search-bar button { padding: 5px 10px; background-color: #333; color: white; border: none; border-radius: 3px; cursor: pointer; margin-left: 5px; }
+        body.dark-theme #search-bar button { background-color: #555; }
+        #search-bar button:hover { background-color: #555; }
+        body.dark-theme #search-bar button:hover { background-color: #777; }
+        .visitor-counter { text-align: center; margin: 20px 0; font-size: 0.9em; color: #555; flex-basis: 100%; order: 1; }
+        body.dark-theme .visitor-counter { color: #aaa; }
+        .visitor-counter .icon { margin-right: 5px; }
+        .footer { background-color: #f1f1f1; padding: 40px 5%; display: flex; justify-content: space-around; flex-wrap: wrap; border-top: 1px solid #ddd; }
+        body.dark-theme .footer { background-color: #111; color: #ccc; border-top: 1px solid #333; }
+        .footer-section { flex: 1; min-width: 220px; margin: 20px; }
+        .footer h1 { font-size: 1.4em; margin-bottom: 15px; color: #333; }
+        body.dark-theme .footer h1 { color: #eee; }
+        .footer-list { list-style: none; padding: 0; margin: 0; }
+        .footer-list li { margin-bottom: 10px; font-size: 0.95em; color: #555; }
+        body.dark-theme .footer-list li { color: #aaa; }
+        .footer-list li a { color: #555; text-decoration: none; transition: color 0.3s ease; }
+        body.dark-theme .footer-list li a { color: #aaa; }
+        .footer-list li a:hover { color: #007bff; }
+        body.dark-theme .footer-list li a:hover { color: #4ca1ff; }
+        .footer .socials { margin-top: 15px; display: flex; gap: 10px; justify-content: center; }
+        .footer .socials a { font-size: 1.3em; color: #555; transition: color 0.3s ease; }
+        body.dark-theme .footer .socials a { color: #aaa; }
+        .footer .socials a:hover { color: #007bff; }
+        body.dark-theme .footer .socials a:hover { color: #4ca1ff; }
+        .footer .sub input[type="email"] { padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: calc(100% - 110px); margin-right: 5px; box-sizing: border-box; }
+        body.dark-theme .footer .sub input[type="email"] { background-color: #444; border-color: #555; color: #eee; }
+        .footer .sub button.btn { padding: 10px 15px; background-color: #333; color: white; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.3s ease; }
+        body.dark-theme .footer .sub button.btn { background-color: #555; }
+        .footer .sub button.btn:hover { background-color: #555; }
+        body.dark-theme .footer .sub button.btn:hover { background-color: #777; }
+        .footer-copyright { background-color: #e9e9e9; text-align: center; padding: 15px 0; font-size: 0.9em; color: #666; }
+        body.dark-theme .footer-copyright { background-color: #000; color: #888; }
+        .scroll-top { position: fixed; right: 1.6%; background: linear-gradient(100deg, #1ca6f0, #3c7aff, #05deff); color: white; width: 60px; height: 60px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 24px; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, visibility 0s linear 0.3s; box-shadow: 0 5px 15px rgba(60, 122, 255, 0.4); overflow: visible; z-index: 1000; bottom: 15px; }
+        .scroll-top.show { opacity: 1; visibility: visible; transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, visibility 0s linear 0s; }
+        .scroll-top:hover { transform: scale(1.1); box-shadow: 0 8px 20px rgba(60, 122, 255, 0.6); animation: pulse 1.5s infinite; }
+        .scroll-top:active { transform: scale(1.05); }
+        .scroll-top-icon { position: relative; z-index: 2; transition: transform 0.3s ease; }
+        .scroll-top:hover .scroll-top-icon { transform: translateY(-3px); }
+        .progress-ring { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+        .progress-ring__circle { transition: stroke-dashoffset 0.35s; transform-origin: 50% 50%; stroke: #ffffff; stroke-width: 4; fill: transparent; }
+        @keyframes pulse { 0% { box-shadow: 0 5px 15px rgba(60, 122, 255, 0.4); } 50% { box-shadow: 0 8px 20px rgba(60, 122, 255, 0.7); } 100% { box-shadow: 0 5px 15px rgba(60, 122, 255, 0.4); } }
+        /* Mobile menu (.show-nav) styles */
+        @media (max-width: 992px) {
+            .header nav:not(.utils) { display: none; }
+            .header nav:not(.utils).show-nav { display: flex; flex-direction: column; position: absolute; top: 70px; left: 0; width: 100%; background-color: #ffffff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 999; }
+            body.dark-theme .header nav:not(.utils).show-nav { background-color: #1f1f1f; }
+            .header nav:not(.utils).show-nav .tabs { flex-direction: column; width: 100%; }
+            .header nav:not(.utils).show-nav .tab { margin: 0; width: 100%; border-bottom: 1px solid #eee; }
+            body.dark-theme .header nav:not(.utils).show-nav .tab { border-bottom: 1px solid #333; }
+            .header nav:not(.utils).show-nav .tab a { padding: 15px; text-align: center; }
+            .header nav:not(.utils).show-nav .cursor { display: none; }
+            .header nav:not(.utils).show-nav .dropdown-content { position: static; box-shadow: none; border-top: 1px solid #eee; }
+            body.dark-theme .header nav:not(.utils).show-nav .dropdown-content { border-top: 1px solid #333; }
+        }
+    </style>
+</head>
+<body>
+  <div id="preloader">
+    <div class="wrapper">
+        <div class="box-wrap">
+            <div class="box one"></div>
+            <div class="box two"></div>
+            <div class="box three"></div>
+            <div class="box four"></div>
+            <div class="box five"></div>
+            <div class="box six"></div>
+        </div>
+    </div>
+</div>
+<div id="progress-container">
+    <div id="progress-bar"></div>
+  </div>
+    <header class="header" id="header">
+          <div class="logo">
+            <a href="/"> <img src="images/logo.png" alt="Logo" srcset=""> </a>
+            <i class="fa-solid fa-bars menu" id="menu"></i>
+        </div>
+
+        
+        <nav class="bg-neutral-100 py-20">
+            <div class="tabs-container">
+                <ul id="tabs" class="tabs">
+                    <li class="tab">
+                        <a href="index.html">Home</a>
+                        
+                    </li>
+                      <li class="tab">
+                        <a href="about.html">About</a>
+                        
+                    </li>
+                      <li class="tab">
+                        <a href="ordertt.html">Order</a>
+                        
+                    </li>
+      
+ 
+                </ul>
+            </div>
+        </nav>
+
+        <nav class="utils" style="margin-right:10% ;">
+            <ul class="nav-links">
+                <li><button class="mode-toggle" id="modeToggle"><span class="sun-icon glow" ><img src="day-mode.png" alt="Light mode"></span><span class="moon-icon glow hidden"><img src="moon.png" alt="Dark mode"></span></button></li>
+                <li class="nav-link" ><i class="fa-solid fa-cart-shopping theme-icon" id="cart-icon"></i></li>
+                <li class="nav-link"><a href="login-sginup.html"><i class="fa-solid fa-user theme-icon"></i></a></li>
+                <li class="nav-link"><i class="fa-solid fa-magnifying-glass theme-icon" id="search-icon"></i></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Search Bar (Standardized) -->
+    <div id="search-bar">
+        <input type="text" id="search" placeholder="Search..." /> <button type="submit" id="search-btn">Go</button>
+    </div>
+
+    <!-- Main Content for Order Tracking Page -->
+    <main>
+        <div class="order-tracking-container" data-aos="fade-up">
+            <h1>Track Your 5*A Order</h1>
+            <form class="order-tracking-form" id="orderTrackingForm">
+                <div>
+                    <label for="orderNumber">Order Number:</label>
+                    <input type="text" id="orderNumber" name="orderNumber" placeholder="Enter your order number (e.g., 5A123456789)" required>
+                </div>
+                <div>
+                    <label for="emailOrPhone">Email or Phone Number:</label>
+                    <input type="text" id="emailOrPhone" name="emailOrPhone" placeholder="Enter the email or phone used for the order" required>
+                </div>
+                <button type="submit">Track Order</button>
+            </form>
+
+            <div id="orderStatusCard" class="order-status-card">
+                <h3>Order Status for #<span id="displayOrderNumber"></span></h3>
+                <div class="order-summary-brief">
+                    <p><strong>Estimated Delivery:</strong> <span id="estimatedDelivery"></span></p>
+                    <p><strong>Current Status:</strong> <span id="currentStatus"></span></p>
+                    <p><strong>Shipped Via:</strong> <span id="shippingCarrier"></span></p>
+                    <p><strong>Tracking ID:</strong> <a href="#" id="trackingLink" target="_blank">N/A</a></p>
+                </div>
+
+                <div class="status-timeline" id="statusTimeline">
+                    <!-- Timeline items will be dynamically inserted here -->
+                </div>
+
+                <div class="order-details-section">
+                    <h4>Order Details:</h4>
+                    <table class="order-details-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderDetailsBody">
+                            <!-- Order items will be dynamically inserted here -->
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" style="text-align: right; font-weight: bold;">Shipping:</td>
+                                <td id="shippingCostValue" style="font-weight: bold;">$0.00</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" style="text-align: right; font-weight: bold;">Total:</td>
+                                <td id="orderTotalValue" style="font-weight: bold; font-size: 1.1em;">$0.00</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="map-container" id="mapContainer" style="display: none;">
+                    <h4>Current Package Location (Approximate)</h4>
+                    <iframe id="orderMap"
+                        width="100%"
+                        height="350"
+                        style="border:0"
+                        loading="lazy"
+                        allowfullscreen
+                        referrerpolicy="no-referrer-when-downgrade"
+                        src="">
+                    </iframe>
+                </div>
+            </div>
+            <div id="orderNotFound" class="empty-state" style="display: none;">
+                <p><i class="fas fa-exclamation-circle" style="color: #e74c3c; font-size: 1.5em; margin-right: 10px;"></i>Order not found. Please verify your order number and email/phone, or contact customer support for assistance.</p>
+            </div>
+        </div>
+
+        <section class="fake-counter-section" data-aos="fade-in" data-aos-delay="200">
+            <h3><i class="fas fa-box-open"></i> Orders Processed by 5*A Today</h3>
+            <p id="fakeOrderCounter">0</p>
+        </section>
+    </main>
+
+
+
+    <!-- Scroll to Top Button (Standardized) -->
+    <button id="scrollToTopBtn" class="scroll-top" aria-label="Scroll to top">
+        <div class="scroll-top-icon"><i class="fa-solid fa-arrow-up"></i></div>
+        <svg class="progress-ring" width="60" height="60"><circle class="progress-ring__circle" r="28" cx="30" cy="30"></circle></svg>
+    </button>
+
+    <!-- JS Includes -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="preloader.js"></script>
+    <script src="script/progressbar.js"></script>
+    <script src="./script/modal_box.js"></script>
+    <script src="./script/popup.js"></script>
+
+    <script>
+        // Initialize AOS
+        AOS.init({ duration: 800, once: true });
+        // Set Year in Footer
+        const yearSpanFooter = document.getElementById('year-footer');
+        if (yearSpanFooter) yearSpanFooter.textContent = new Date().getFullYear();
+
+        // Standardized Header/Footer/Util JS
+        (function() { const btn = document.getElementById("menu"), nav = document.querySelector('header nav:not(.utils)'); if(btn && nav) btn.addEventListener("click", () => nav.classList.toggle('show-nav')); })();
+        const cartIcon = document.getElementById("cart-icon"); if(cartIcon) cartIcon.addEventListener("click", () => window.location.href = "cart.html");
+        const searchIcon = document.getElementById("search-icon"), searchBar = document.getElementById("search-bar"), searchInput = document.getElementById("search"), searchBtn = document.getElementById("search-btn"); if(searchIcon && searchBar && searchInput && searchBtn) { searchIcon.onclick = (e) => { e.stopPropagation(); searchBar.style.display = (searchBar.style.display === 'block' ? 'none' : 'block'); if(searchBar.style.display === 'block') searchInput.focus(); }; searchBtn.onclick = () => { const q = searchInput.value; if(q) { console.log("Search:", q); searchBar.style.display = 'none'; } }; document.addEventListener('click', (e) => { if (!searchBar.contains(e.target) && e.target !== searchIcon) searchBar.style.display = 'none'; }); }
+        const modeToggleBtn = document.getElementById("modeToggle"); if (modeToggleBtn) { const sun = modeToggleBtn.querySelector(".sun-icon"), moon = modeToggleBtn.querySelector(".moon-icon"), applyTheme = (t) => { document.body.classList.toggle("dark-theme", t === "dark"); sun.classList.toggle("hidden", t === "dark"); moon.classList.toggle("hidden", t === "light"); localStorage.setItem("theme", t); }; modeToggleBtn.onclick = () => applyTheme(document.body.classList.contains("dark-theme") ? "light" : "dark"); applyTheme(localStorage.getItem("theme") || "light"); }
+        document.querySelectorAll('.tab').forEach(tab => { const cursor = tab.querySelector('.cursor'); if (cursor) { const link = tab.querySelector('a'); const isActive = link && link.classList.contains('active'); cursor.style.opacity = isActive ? 1 : 0; cursor.style.width = isActive ? `${tab.offsetWidth}px` : '0px'; cursor.style.left = isActive ? `${tab.offsetLeft}px` : `${tab.offsetLeft + tab.offsetWidth / 2}px`; tab.addEventListener('mouseenter', () => { cursor.style.opacity = 1; cursor.style.width = `${tab.offsetWidth}px`; cursor.style.left = `${tab.offsetLeft}px`; }); tab.addEventListener('mouseleave', () => { const currentActiveTab = document.querySelector('.tab a.active')?.closest('.tab'); if (currentActiveTab === tab) { cursor.style.opacity = 1; cursor.style.width = `${tab.offsetWidth}px`; cursor.style.left = `${tab.offsetLeft}px`; } else if (currentActiveTab) { cursor.style.width = `${currentActiveTab.offsetWidth}px`; cursor.style.left = `${currentActiveTab.offsetLeft}px`; cursor.style.opacity = 1; } else { cursor.style.opacity = 0; cursor.style.width = '0px'; cursor.style.left = `${tab.offsetLeft + tab.offsetWidth / 2}px`; } }); } });
+        const adjustCursor = () => { const activeTab = document.querySelector('.tab a.active')?.closest('.tab'); if (activeTab) { const cursor = activeTab.querySelector('.cursor'); if (cursor) { cursor.style.width = `${activeTab.offsetWidth}px`; cursor.style.left = `${activeTab.offsetLeft}px`; cursor.style.opacity = 1; } } };
+        window.addEventListener('resize', adjustCursor); document.addEventListener('DOMContentLoaded', adjustCursor);
+        const scrollToTopBtn = document.getElementById("scrollToTopBtn"), progressCircle = scrollToTopBtn ? scrollToTopBtn.querySelector(".progress-ring__circle") : null; if (scrollToTopBtn && progressCircle) { const r = progressCircle.r.baseVal.value, C = 2 * Math.PI * r; progressCircle.style.strokeDasharray = `${C} ${C}`; progressCircle.style.strokeDashoffset = C; const t = () => scrollToTopBtn.classList.toggle("show", window.scrollY > 100), s = (p) => { const o = C - (Math.max(0, Math.min(100, p)) / 100) * C; progressCircle.style.strokeDashoffset = o; }; window.addEventListener("scroll", () => { t(); const h = document.documentElement.scrollHeight - window.innerHeight; s(h > 0 ? (window.scrollY / h) * 100 : 0); }); scrollToTopBtn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" })); t(); const iH = document.documentElement.scrollHeight - window.innerHeight; s(iH > 0 ? (window.scrollY / iH) * 100 : 0); }
+        function getVisitorCount() { return localStorage.getItem('visitorCount') || 0; } function incrementVisitorCount() { let c = parseInt(getVisitorCount()) + 1; localStorage.setItem('visitorCount', c); return c; } function displayVisitorCount() { const el = document.querySelector('.website-counter'); if(el) el.textContent = incrementVisitorCount(); } document.addEventListener('DOMContentLoaded', displayVisitorCount);
+        const openBtnFooterModal = document.getElementById("open-btn-footer"); const modalBoxFooterModal = document.getElementById("modalbox-footer"); const closeBtnFooterModal = document.getElementById("close-btn-footer"); const emailInputFooterModal = document.getElementById("email-input-footer");
+        if (openBtnFooterModal && modalBoxFooterModal && closeBtnFooterModal && emailInputFooterModal) { function isValidEmail(email) { const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; return regex.test(email); } openBtnFooterModal.addEventListener("click", function () { if (emailInputFooterModal.value === "") { alert("Please enter your email address."); } else if (!isValidEmail(emailInputFooterModal.value)) { alert("Please enter a valid email address."); } else { modalBoxFooterModal.style.display = "block"; } }); if(closeBtnFooterModal) closeBtnFooterModal.addEventListener("click", function () { modalBoxFooterModal.style.display = "none"; }); modalBoxFooterModal.addEventListener("click", function (event) { if (event.target === modalBoxFooterModal) { modalBoxFooterModal.style.display = "none"; } }); }
+
+
+        // Order Tracking Specific JavaScript - Enhanced
+        const orderTrackingForm = document.getElementById('orderTrackingForm');
+        const orderStatusCard = document.getElementById('orderStatusCard');
+        const orderNotFoundDiv = document.getElementById('orderNotFound');
+        const displayOrderNumber = document.getElementById('displayOrderNumber');
+        const estimatedDelivery = document.getElementById('estimatedDelivery');
+        const currentStatusEl = document.getElementById('currentStatus');
+        const shippingCarrier = document.getElementById('shippingCarrier');
+        const trackingLink = document.getElementById('trackingLink');
+        const statusTimeline = document.getElementById('statusTimeline');
+        const orderDetailsBody = document.getElementById('orderDetailsBody');
+        const orderTotalValue = document.getElementById('orderTotalValue');
+        const shippingCostValue = document.getElementById('shippingCostValue');
+        const mapContainer = document.getElementById('mapContainer');
+        const orderMap = document.getElementById('orderMap');
+
+        // Fake order data with more details and Russian city examples
+        const fakeOrders = {
+            "1234": {
+                emailOrPhone: "1234",
+                estimatedDelivery: "October 28, 2024",
+                currentStatus: "Shipped",
+                shippingCarrier: "SDEK Express",
+                trackingId: "SDEK12345RU",
+                trackingUrl: "https://www.sdek.ru/en/tracking?nomer_nakladnoi=SDEK12345RU",
+                currentLocation: { lat: 59.9343, lon: 30.3351 }, // Saint Petersburg (example)
+                destination: "Moscow, Russia",
+                timeline: [
+                    { status: "Order Placed", date: "October 20, 2024", time: "10:30 AM", icon: "fas fa-check-circle", completed: true, details: "Your order has been successfully placed." },
+                    { status: "Payment Confirmed", date: "October 20, 2024", time: "10:35 AM", icon: "fas fa-credit-card", completed: true, details: "Payment processed successfully." },
+                    { status: "Processing", date: "October 21, 2024", time: "02:00 PM", icon: "fas fa-cogs", completed: true, details: "Your order is being prepared for shipment." },
+                    { status: "Shipped", date: "October 22, 2024", time: "09:00 AM", icon: "fas fa-truck", completed: true, current: true, details: "Package left our Moscow warehouse." },
+                    { status: "In Transit - Kazan", date: "October 23, 2024", time: "04:00 PM", icon: "fas fa-shipping-fast", completed: false, pending: true, details: "Arrived at sorting facility in Kazan." },
+                    { status: "Out for Delivery", date: "October 28, 2024", time: "Expected by 6 PM", icon: "fas fa-dolly", completed: false, details: "Your package is with the local courier." },
+                    { status: "Delivered", date: "October 28, 2024", time: "Expected", icon: "fas fa-box-check", completed: false }
+                ],
+                items: [
+                    { name: "Men's Volga Linen Shirt", quantity: 1, price: 75.00, image: "images/mens_shirt_placeholder.jpg" },
+                    { name: "Women's Siberian Fur Hat", quantity: 1, price: 90.00, image: "images/womens_hat_placeholder.jpg" }
+                ],
+                shippingAddress: "15 Tverskaya Street, Apartment 5, Moscow, 125009, Russia",
+                billingAddress: "15 Tverskaya Street, Apartment 5, Moscow, 125009, Russia",
+                paymentMethod: "Visa **** **** **** 1234",
+                shippingCost: 10.00,
+                total: (75.00 * 1) + (90.00 * 1) + 10.00
+            },
+            "5A987654321": {
+                emailOrPhone: "user@domain.ru",
+                estimatedDelivery: "November 02, 2024",
+                currentStatus: "Processing",
+                shippingCarrier: "Russian Post",
+                trackingId: "RP000999888RU",
+                trackingUrl: "https://www.pochta.ru/tracking#RP000999888RU",
+                currentLocation: { lat: 55.7558, lon: 37.6173 }, // Moscow (example start)
+                destination: "Yekaterinburg, Russia",
+                timeline: [
+                    { status: "Order Placed", date: "October 25, 2024", time: "03:15 PM", icon: "fas fa-check-circle", completed: true, details: "Order received and awaiting payment confirmation." },
+                    { status: "Payment Confirmed", date: "October 25, 2024", time: "03:20 PM", icon: "fas fa-credit-card", completed: true, details: "Payment confirmed." },
+                    { status: "Processing", date: "October 26, 2024", time: "Ongoing", icon: "fas fa-cogs", completed: false, current: true, pending: true, details: "We are carefully preparing your items." },
+                    { status: "Shipped", date: "Expected by Oct 28", time: "", icon: "fas fa-truck", completed: false },
+                    { status: "Delivered", date: "Expected by Nov 02", time: "", icon: "fas fa-box-check", completed: false }
+                ],
+                items: [ { name: "Kid's Matryoshka Doll Set", quantity: 1, price: 30.00, image: "images/kids_doll_placeholder.jpg" } ],
+                shippingAddress: "25 Lenin Avenue, Yekaterinburg, 620014, Russia",
+                billingAddress: "25 Lenin Avenue, Yekaterinburg, 620014, Russia",
+                paymentMethod: "Mir **** **** **** 5678",
+                shippingCost: 7.50,
+                total: (30.00 * 1) + 7.50
+            }
+        };
+
+        if (orderTrackingForm) {
+            orderTrackingForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const orderNumberInput = document.getElementById('orderNumber').value.trim().toUpperCase();
+                const emailOrPhoneInput = document.getElementById('emailOrPhone').value.trim();
+                const fakeCounterElement = document.getElementById('fakeOrderCounter');
+
+                // "Fake" counter activity on search
+                if (fakeCounterElement) {
+                    let currentCount = parseInt(fakeCounterElement.textContent.replace(/,/g, '')) || 0;
+                    currentCount += Math.floor(Math.random() * 50) + 10; // More significant jump on search
+                    fakeCounterElement.textContent = currentCount.toLocaleString();
+                    localStorage.setItem('fakeOrderCount', currentCount);
+                }
+
+                const orderData = fakeOrders[orderNumberInput];
+
+                if (orderData && orderData.emailOrPhone.toLowerCase() === emailOrPhoneInput.toLowerCase()) {
+                    displayOrderNumber.textContent = orderNumberInput;
+                    estimatedDelivery.textContent = orderData.estimatedDelivery;
+                    currentStatusEl.textContent = orderData.currentStatus;
+                    currentStatusEl.className = '';
+                    currentStatusEl.classList.add(`status-${orderData.currentStatus.toLowerCase().replace(/\s+/g, '-')}`);
+                    shippingCarrier.textContent = orderData.shippingCarrier || "N/A";
+                    trackingLink.textContent = orderData.trackingId || "N/A";
+                    trackingLink.href = orderData.trackingUrl || "#";
+                    trackingLink.style.display = orderData.trackingId ? 'inline' : 'none';
+
+                    statusTimeline.innerHTML = '';
+                    orderData.timeline.forEach(item => {
+                        const timelineItem = document.createElement('div');
+                        timelineItem.classList.add('timeline-item');
+                        if (item.completed) timelineItem.classList.add('completed');
+                        if (item.pending) timelineItem.classList.add('pending');
+                        if (item.current) timelineItem.classList.add('current');
+                        timelineItem.innerHTML = `
+                            <div class="timeline-icon"><i class="${item.icon || 'fas fa-circle'}"></i></div>
+                            <div class="timeline-content">
+                                <h4>${item.status}</h4>
+                                <p>${item.date} ${item.time ? '<span class="time">at ' + item.time + '</span>' : ''}</p>
+                                ${item.details ? `<p style="font-size:0.85em; color:#777;"><em>${item.details}</em></p>` : ''}
+                            </div>`;
+                        statusTimeline.appendChild(timelineItem);
+                    });
+
+                    orderDetailsBody.innerHTML = '';
+                    orderData.items.forEach(item => {
+                        const row = orderDetailsBody.insertRow();
+                        row.innerHTML = `
+                            <td><div class="item-name-cell"><img src="${item.image || 'images/product-placeholder.png'}" alt="${item.name}"> ${item.name}</div></td>
+                            <td>${item.quantity}</td>
+                            <td>$${item.price.toFixed(2)}</td>
+                            <td>$${(item.price * item.quantity).toFixed(2)}</td>`;
+                    });
+                    shippingCostValue.textContent = `$${orderData.shippingCost.toFixed(2)}`;
+                    orderTotalValue.textContent = `$${orderData.total.toFixed(2)}`;
+
+                    // Update and display map
+                    if (orderData.currentLocation && orderMap) {
+                        const { lat, lon } = orderData.currentLocation;
+                        // Using OpenStreetMap embed link which doesn't require API key for basic use
+                        orderMap.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon-0.01}%2C${lat-0.01}%2C${lon+0.01}%2C${lat+0.01}&layer=mapnik&marker=${lat}%2C${lon}`;
+                        mapContainer.style.display = 'block';
+                    } else {
+                        mapContainer.style.display = 'none';
+                    }
+
+                    orderStatusCard.style.display = 'block';
+                    orderNotFoundDiv.style.display = 'none';
+                    if (typeof gsap !== 'undefined') gsap.fromTo(orderStatusCard, {opacity: 0, y: 20}, {opacity: 1, y: 0, duration: 0.5, ease: "power2.out"});
+                } else {
+                    orderStatusCard.style.display = 'none';
+                    mapContainer.style.display = 'none';
+                    orderNotFoundDiv.style.display = 'block';
+                     if (typeof gsap !== 'undefined') gsap.fromTo(orderNotFoundDiv, {opacity: 0, y: 10}, {opacity: 1, y: 0, duration: 0.3});
+                }
+            });
+        }
+
+        // Fake Counter Initial Load and Interval
+        const fakeCounterElement = document.getElementById('fakeOrderCounter');
+        if (fakeCounterElement) {
+            let storedCount = localStorage.getItem('fakeOrderCount');
+            let currentCount = storedCount ? parseInt(storedCount) : Math.floor(Math.random() * 200) + 300; // Start with a reasonable number
+            fakeCounterElement.textContent = currentCount.toLocaleString();
+
+            setInterval(() => {
+                currentCount += Math.floor(Math.random() * 2) + 1; // Increment by 1 or 2
+                localStorage.setItem('fakeOrderCount', currentCount);
+                fakeCounterElement.textContent = currentCount.toLocaleString();
+            }, 4000 + Math.random() * 2000); // Update every 4-6 seconds
+        }
+
+
+        // GSAP Animations
+        if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+            gsap.registerPlugin(ScrollTrigger);
+            gsap.from(".order-tracking-container h1", { duration: 0.8, y: -30, opacity: 0, ease: "power2.out", delay: 0.3 });
+            gsap.from(".order-tracking-form > div", { duration: 0.7, y: 20, opacity: 0, stagger: 0.15, ease: "power2.out", delay: 0.5 });
+            gsap.from(".order-tracking-form button", { duration: 0.7, scale: 0.8, opacity: 0, ease: "back.out(1.7)", delay: 0.8 });
+            gsap.from(".fake-counter-section", { scrollTrigger: ".fake-counter-section", duration: 1, opacity: 0, y: 30, ease: "power2.out" });
+            gsap.from(".footer-section", { scrollTrigger: ".footer", duration: 1, opacity: 0, y: 50, ease: "power2.out", stagger: 0.2 });
+        } else {
+            console.warn("GSAP/ScrollTrigger not found.");
+        }
+    </script>
+
+    <!-- Google Translate Widget -->
+    <div class="gtranslate_wrapper"></div>
+    <script>window.gtranslateSettings = {"default_language":"en","detect_browser_language":true,"wrapper_selector":".gtranslate_wrapper"}</script>
+    <script src="https://cdn.gtranslate.net/widgets/latest/float.js" defer></script>
+      </script>
+      <div class="gtranslate_wrapper"></div>
+        <script>window.gtranslateSettings = {"default_language":"en","detect_browser_language":true,"wrapper_selector":".gtranslate_wrapper"}</script>
+<script src="https://cdn.gtranslate.net/widgets/latest/float.js" defer></script>
+</body>
+
+
+
+</html>

@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Changed Title -->
+    <title>My Wishlist - 5*A</title>
+    
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Round">
+    <link rel="shortcut icon" href="images/logo1.png" type="image/x-icon">
+    <link rel="stylesheet" href="preloaderStyle.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="./style.css"> <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="./Style/popup.css"> <!-- Popup CSS -->
+
+    <style>
+        /* General Body Styles */
+        body { font-family: Arial, sans-serif; background-color: #f7f7f7; margin: 0; padding: 0; padding-top: 70px; display: flex; flex-direction: column; min-height: 100vh; color: #333; transition: background-color 0.3s ease, color 0.3s ease; }
+        main { flex-grow: 1; padding: 20px; }
+        body.dark-theme { background-color: #1a1a1a; color: #f1f1f1; }
+        body.dark-theme h1, body.dark-theme h2, body.dark-theme h3 { color: #f1f1f1; }
+        body.dark-theme .wishlist-item { background-color: #2c2c2c; border-color: #444; box-shadow: 0 4px 8px rgba(255,255,255,0.05); }
+        body.dark-theme .wishlist-item:hover { background-color: #3a3a3a; box-shadow: 0 6px 12px rgba(255,255,255,0.1); }
+        body.dark-theme .item-details h4 { color: #e0e0e0; }
+        body.dark-theme .item-details p { color: #bbb; }
+        body.dark-theme .wishlist-item-actions button { background-color: #0056b3; color: #fff; }
+        body.dark-theme .wishlist-item-actions button.remove-from-wishlist { background-color: #555; }
+        body.dark-theme .wishlist-item-actions button:hover { background-color: #004494; }
+        body.dark-theme .wishlist-item-actions button.remove-from-wishlist:hover { background-color: #666; }
+        body.dark-theme .empty-wishlist-message { color: #ccc; }
+
+        /* Wishlist Page Styles */
+        .wishlist-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .wishlist-container h1 { text-align: center; font-size: 2.5em; margin-bottom: 30px; font-weight: bold; }
+        .wishlist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .wishlist-item {
+            background-color: #fff; border: 1px solid #ddd; border-radius: 8px;
+            padding: 15px; display: flex; flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .wishlist-item:hover { transform: translateY(-5px); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        .wishlist-item-image img { width: 100%; height: 250px; object-fit: cover; border-radius: 4px; margin-bottom: 10px; }
+        .item-details h4 { font-size: 1.1em; margin: 10px 0 5px; font-weight: 600; min-height: 40px; }
+        .item-details p { font-size: 1em; color: #007bff; font-weight: bold; margin-bottom: 10px; }
+        .wishlist-item-actions { margin-top: auto; display: flex; gap: 10px; padding-top: 10px; border-top: 1px solid #eee; }
+        body.dark-theme .wishlist-item-actions { border-top-color: #444; }
+        .wishlist-item-actions button {
+            flex-grow: 1; padding: 10px; border: none; border-radius: 5px;
+            cursor: pointer; font-size: 0.9em; font-weight: 500; transition: background-color 0.3s ease;
+        }
+        .wishlist-item-actions .move-to-cart { background-color: #007bff; color: white; }
+        .wishlist-item-actions .move-to-cart:hover { background-color: #0056b3; }
+        .wishlist-item-actions .remove-from-wishlist { background-color: #dc3545; color: white; }
+        .wishlist-item-actions .remove-from-wishlist:hover { background-color: #c82333; }
+        .empty-wishlist-message { text-align: center; font-size: 1.2em; color: #777; padding: 50px 20px; }
+
+        /* Standardized CSS (Header, Footer, Common Elements) */
+        .header { background-color: #ffffff; position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; padding: 10px 2%; height: 70px; transition: background-color 0.3s ease, box-shadow 0.3s ease; }
+        body.dark-theme .header { background-color: #1f1f1f; box-shadow: 0 2px 5px rgba(255,255,255,0.1); }
+        .tabs-container { display: flex; align-items: center; overflow-x: auto; }
+        .tabs { list-style: none; padding: 0; margin: 0; display: flex; position: relative; white-space: nowrap; }
+        .tab { margin: 0 10px; position: relative; flex-shrink: 0; }
+        .tab a { text-decoration: none; color: #333; padding: 10px 5px; display: block; position: relative; transition: color 0.3s ease; font-weight: 500; }
+        body.dark-theme .tab a { color: #f1f1f1; }
+        body.dark-theme .tab a.active { color: #4ca1ff; }
+        .cursor { position: absolute; bottom: 0; left: 0; height: 3px; background-color: #007bff; border-radius: 2px; opacity: 0; transition: left 0.3s ease, width 0.3s ease, opacity 0.3s ease; pointer-events: none; }
+        body.dark-theme .cursor { background-color: #4ca1ff; }
+        .tab:hover .cursor, .tab a.active + .cursor { opacity: 1; }
+        .dropdown-content { display: none; position: absolute; background-color: #fff; min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; list-style: none; padding: 0; margin-top: 5px; border-radius: 4px; }
+        body.dark-theme .dropdown-content { background-color: #333; box-shadow: 0px 8px 16px 0px rgba(255,255,255,0.1); }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropdown-content li a { padding: 12px 16px; display: block; color: #333; font-weight: normal; }
+        body.dark-theme .dropdown-content li a { color: #f1f1f1; }
+        .dropdown-content li a:hover { background-color: #f1f1f1; }
+        body.dark-theme .dropdown-content li a:hover { background-color: #444; }
+        .utils { display: flex; align-items: center; }
+        .utils .nav-links { list-style: none; padding: 0; margin: 0; display: flex; align-items: center; gap: 15px; }
+        .utils .nav-link i, .utils .nav-link a > i { font-size: 1.2em; cursor: pointer; color: #333; transition: color 0.3s ease; }
+        body.dark-theme .utils .nav-link i, body.dark-theme .utils .nav-link a > i { color: #f1f1f1; }
+        .utils .nav-link i:hover, .utils .nav-link a:hover > i { color: #007bff; }
+        body.dark-theme .utils .nav-link i:hover, body.dark-theme .utils .nav-link a:hover > i { color: #4ca1ff; }
+        .mode-toggle { background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; }
+        .mode-toggle img { width: 24px; height: 24px; }
+        .hidden { display: none; }
+        #search-bar { display: none; position: absolute; top: 65px; right: 20px; background-color: white; padding: 10px; border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); z-index: 1002; }
+        body.dark-theme #search-bar { background-color: #333; box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1); }
+        #search-bar input { padding: 5px 8px; width: 200px; border: 1px solid #ccc; border-radius: 3px; outline: none; }
+        body.dark-theme #search-bar input { background-color: #444; border-color: #555; color: #eee; }
+        #search-bar button { padding: 5px 10px; background-color: #333; color: white; border: none; border-radius: 3px; cursor: pointer; margin-left: 5px; }
+        body.dark-theme #search-bar button { background-color: #555; }
+        #search-bar button:hover { background-color: #555; }
+        body.dark-theme #search-bar button:hover { background-color: #777; }
+        .visitor-counter { text-align: center; margin: 20px 0; font-size: 0.9em; color: #555; flex-basis: 100%; order: 1; }
+        body.dark-theme .visitor-counter { color: #aaa; }
+        .visitor-counter .icon { margin-right: 5px; }
+        .footer { background-color: #f1f1f1; padding: 40px 5%; display: flex; justify-content: space-around; flex-wrap: wrap; border-top: 1px solid #ddd; }
+        body.dark-theme .footer { background-color: #111; color: #ccc; border-top: 1px solid #333; }
+        .footer-section { flex: 1; min-width: 220px; margin: 20px; }
+        .footer h1 { font-size: 1.4em; margin-bottom: 15px; color: #333; }
+        body.dark-theme .footer h1 { color: #eee; }
+        .footer-list { list-style: none; padding: 0; margin: 0; }
+        .footer-list li { margin-bottom: 10px; font-size: 0.95em; color: #555; }
+        body.dark-theme .footer-list li { color: #aaa; }
+        .footer-list li a { color: #555; text-decoration: none; transition: color 0.3s ease; }
+        body.dark-theme .footer-list li a { color: #aaa; }
+        .footer-list li a:hover { color: #007bff; }
+        body.dark-theme .footer-list li a:hover { color: #4ca1ff; }
+        .footer .socials { margin-top: 15px; display: flex; gap: 10px; justify-content: center; }
+        .footer .socials a { font-size: 1.3em; color: #555; transition: color 0.3s ease; }
+        body.dark-theme .footer .socials a { color: #aaa; }
+        .footer .socials a:hover { color: #007bff; }
+        body.dark-theme .footer .socials a:hover { color: #4ca1ff; }
+        .footer .sub input[type="email"] { padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: calc(100% - 110px); margin-right: 5px; box-sizing: border-box; }
+        body.dark-theme .footer .sub input[type="email"] { background-color: #444; border-color: #555; color: #eee; }
+        .footer .sub button.btn { padding: 10px 15px; background-color: #333; color: white; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.3s ease; }
+        body.dark-theme .footer .sub button.btn { background-color: #555; }
+        .footer .sub button.btn:hover { background-color: #555; }
+        body.dark-theme .footer .sub button.btn:hover { background-color: #777; }
+        .footer-copyright { background-color: #e9e9e9; text-align: center; padding: 15px 0; font-size: 0.9em; color: #666; }
+        body.dark-theme .footer-copyright { background-color: #000; color: #888; }
+        .scroll-top { position: fixed; right: 1.6%; background: linear-gradient(100deg, #1ca6f0, #3c7aff, #05deff); color: white; width: 60px; height: 60px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 24px; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, visibility 0s linear 0.3s; box-shadow: 0 5px 15px rgba(60, 122, 255, 0.4); overflow: visible; z-index: 1000; bottom: 15px; }
+        .scroll-top.show { opacity: 1; visibility: visible; transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, visibility 0s linear 0s; }
+        .scroll-top:hover { transform: scale(1.1); box-shadow: 0 8px 20px rgba(60, 122, 255, 0.6); animation: pulse 1.5s infinite; }
+        .scroll-top:active { transform: scale(1.05); }
+        .scroll-top-icon { position: relative; z-index: 2; transition: transform 0.3s ease; }
+        .scroll-top:hover .scroll-top-icon { transform: translateY(-3px); }
+        .progress-ring { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+        .progress-ring__circle { transition: stroke-dashoffset 0.35s; transform-origin: 50% 50%; stroke: #ffffff; stroke-width: 4; fill: transparent; }
+        @keyframes pulse { 0% { box-shadow: 0 5px 15px rgba(60, 122, 255, 0.4); } 50% { box-shadow: 0 8px 20px rgba(60, 122, 255, 0.7); } 100% { box-shadow: 0 5px 15px rgba(60, 122, 255, 0.4); } }
+        /* Mobile menu (.show-nav) styles */
+        @media (max-width: 992px) {
+            .header nav:not(.utils) { display: none; }
+            .header nav:not(.utils).show-nav { display: flex; flex-direction: column; position: absolute; top: 70px; left: 0; width: 100%; background-color: #ffffff; box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 999; }
+            body.dark-theme .header nav:not(.utils).show-nav { background-color: #1f1f1f; }
+            .header nav:not(.utils).show-nav .tabs { flex-direction: column; width: 100%; }
+            .header nav:not(.utils).show-nav .tab { margin: 0; width: 100%; border-bottom: 1px solid #eee; }
+            body.dark-theme .header nav:not(.utils).show-nav .tab { border-bottom: 1px solid #333; }
+            .header nav:not(.utils).show-nav .tab a { padding: 15px; text-align: center; }
+            .header nav:not(.utils).show-nav .cursor { display: none; }
+            .header nav:not(.utils).show-nav .dropdown-content { position: static; box-shadow: none; border-top: 1px solid #eee; }
+            body.dark-theme .header nav:not(.utils).show-nav .dropdown-content { border-top: 1px solid #333; }
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .todo-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #000000;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgb(4, 0, 255);
+        }
+
+       
+        /* Todo List Styles */
+        .todo-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .todo-header span {
+            color: #4ca1ff;
+        }
+
+        .todo-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .todo-input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            background: #363636;
+            color: #ffffff;
+            font-size: 16px;
+        }
+
+        .todo-input:focus {
+            outline: 2px solid #4ca1ff;
+        }
+
+        .todo-add-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #4ca1ff;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .todo-add-btn:hover {
+            background: #3b8ae6;
+        }
+
+        .todo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f6f6f6;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            transition: background 0.3s;
+        }
+
+        .todo-item.completed {
+            background: #2a2a2a;
+            opacity: 0.7;
+        }
+
+        .todo-item.completed span {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .todo-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .todo-btn {
+            padding: 5px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        .complete-btn {
+            background: #28a745;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+        }
+
+        .todo-btn:hover {
+            opacity: 0.8;
+        }
+
+        .material-icons-round {
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="wrapper"> <div class="box-wrap"> <div class="box one"></div> <div class="box two"></div> <div class="box three"></div> <div class="box four"></div> <div class="box five"></div> <div class="box six"></div> </div> </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div id="progress-container"> <div id="progress-bar"></div> </div>
+
+    <!-- Header (Standardized) -->
+    <header class="header" id="header">
+        <div class="logo">
+            <a href="/"> <img src="images/logo.png" alt="5*A Logo" srcset=""> </a>
+            <i class="fa-solid fa-bars menu theme-icon" id="menu"></i>
+        </div>
+        <nav>
+            <div class="tabs-container">
+                <ul id="tabs" class="tabs">
+                    <li class="tab"><a href="index.html">Home</a></li>
+                    <li class="tab"><a href="about.html">About</a></li>
+                    <li class="tab"><a href="features.html">Features</a></li>
+                    <li class="dropdown tab">
+
+                    </li>
+                    <li class="tab" style="margin-left: 15px;"><a href="contact.html">Contact Us</a></li>
+                    <li class="tab"><a href="faq.html">FAQ</a></li>
+                    <!-- Active link for this page -->
+                    <li class="tab"><a href="wishlist.html" class="active">wishlist</a></li>
+                </ul>
+            </div>
+        </nav>
+        <nav class="utils">
+            <ul class="nav-links">
+                <li><button class="mode-toggle" id="modeToggle"><span class="sun-icon glow"><img src="day-mode.png" alt="Light mode"></span><span class="moon-icon glow hidden"><img src="moon.png" alt="Dark mode"></span></button></li>
+                <li class="nav-link"><i class="fa-solid fa-cart-shopping theme-icon" id="cart-icon"></i></li>
+                <li class="nav-link"><a href="login-sginup.html"><i class="fa-solid fa-user theme-icon"></i></a></li>
+                <li class="nav-link"><i class="fa-solid fa-magnifying-glass theme-icon" id="search-icon"></i></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Search Bar (Standardized) -->
+    <div id="search-bar">
+        <input type="text" id="search" placeholder="Search..." /> <button type="submit" id="search-btn">Go</button>
+    </div>
+
+    <!-- Main Content for Wishlist Page -->
+    <main>
+        <div class="wishlist-container" data-aos="fade-up">
+            <h1>My Wishlist</h1>
+            <div id="wishlist-grid" class="wishlist-grid">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </style>
+</head>
+<body>
+    <div class="todo-container">
+        <div class="stopwatch-container">
+
+        </div>
+
+        <div class="todo-header">
+            <span class="material-icons-round">task</span>
+            <h3>My WishList</h3>
+        </div>
+        <div class="todo-form">
+            <input type="text" id="todoInput" class="todo-input" placeholder="Add new  WishList...">
+            <button onclick="addTodo()" class="todo-add-btn">
+                <span class="material-icons-round">add</span>
+                Add
+            </button>
+        </div>
+        <div id="todoList"></div>
+    </div>
+
+    <script>
+
+
+        // Todo List functionality
+        let todos = [];
+
+        function addTodo() {
+            const todoInput = document.getElementById('todoInput');
+            const text = todoInput.value.trim();
+            
+            if (text) {
+                const todo = {
+                    id: Date.now(),
+                    text: text,
+                    completed: false
+                };
+
+                todos.push(todo);
+                displayTodos();
+                localStorage.setItem('todos', JSON.stringify(todos));
+                todoInput.value = '';
+            }
+        }
+
+        function displayTodos() {
+            const todoList = document.getElementById('todoList');
+            todoList.innerHTML = '';
+
+            todos.forEach(todo => {
+                const todoDiv = document.createElement('div');
+                todoDiv.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+                
+                todoDiv.innerHTML = `
+                    <span>${todo.text}</span>
+                    <div class="todo-actions">
+                        <button class="todo-btn complete-btn" onclick="toggleTodo(${todo.id})">
+                            <span class="material-icons-round">
+                                ${todo.completed ? 'undo' : 'check'}
+                            </span>
+                        </button>
+                        <button class="todo-btn delete-btn" onclick="deleteTodo(${todo.id})">
+                            <span class="material-icons-round">delete</span>
+                        </button>
+                    </div>
+                `;
+
+                todoList.appendChild(todoDiv);
+            });
+        }
+
+        function toggleTodo(id) {
+            const todo = todos.find(t => t.id === id);
+            if (todo) {
+                todo.completed = !todo.completed;
+                displayTodos();
+                localStorage.setItem('todos', JSON.stringify(todos));
+            }
+        }
+
+        function deleteTodo(id) {
+            todos = todos.filter(todo => todo.id !== id);
+            displayTodos();
+            localStorage.setItem('todos', JSON.stringify(todos));
+        }
+
+        // Load saved todos
+        window.onload = function() {
+            const savedTodos = localStorage.getItem('todos');
+            if (savedTodos) {
+                todos = JSON.parse(savedTodos);
+                displayTodos();
+            }
+        }
+
+        // Enter key functionality
+        document.getElementById('todoInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addTodo();
+            }
+        });
+    </script>
+</body>
+</html>
+
+            </div>
+            <p id="empty-wishlist-message" class="empty-wishlist-message" style="display: none;">Your wishlist is currently empty. Start adding some favorites!</p>
+        </div>
+    </main>
+  <footer class="footer">
+
+        <div class="footer-section">
+            <h1>Contact Us</h1>
+            <ul class="footer-list">
+                <li><a href="Ahmedbakr@internet.ru">Ahmedbakr@internet.ru</a></li>
+                <li>2nd Floor,cairo ,Egypt</li>
+                <li><a href="tel:+91xxxxxxxx2020">+20 1234567</a></li>
+                <li class="border-list"></li>
+                <li class="socials">
+                    <a href="https://vk.link/hioffce" id="linkedin" target="_blank">
+                        <i class="fa-brands fa-linkedin"></i>
+                    </a>
+                    <a href="https://vk.link/hioffce" id="github"target="_blank">
+                        <i class="fa-brands fa-github"></i>
+                    </a>
+                    <a href="https://vk.link/hioffce" id="twitter"target="_blank">
+                        <i class="fa-brands fa-x-twitter"></i>
+                    </a>
+                    <a href="https://vk.link/hioffce" id="instagram"target="_blank">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="footer-section quick-links">
+            <h1>Quick Links</h1>
+            <ul class="footer-list">
+                <li><a href="about.html"><i class="fas fa-info-circle"></i> About Us</a></li>
+  <li><a href="contributors.html"><i class="fas fa-users"></i> Our Contributors</a></li>
+  <li><a href="terms-conditions.html"><i class="fas fa-file-contract"></i> Terms & Conditions</a></li>
+  <li><a href="shopclothing.html"><i class="fas fa-undo-alt"></i>shopclothing</a></li>
+  <li><a href="https://vk.link/hioffce" target="_blank"><i class="fab fa-github"></i> Star Us</a></li>
+  <li><a href="contact.html"><i class="fas fa-envelope"></i> Contact Us</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-section">
+            <h1>Subscribe to Newsletter</h1>
+            <ul class="footer-list">
+                <li>Maxime quae inventore sunt odio perspiciatis vitae saepe officia dolorem.</li>
+                <li class="sub">
+                    <input type="text" placeholder="Enter your email">
+                    <button class="btn">Subscribe</button>
+                </li>
+            </ul>
+        </div>
+    </footer>
+
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script>
+  AOS.init();
+
+  (function() {
+      let headerVisible = false;
+      document.getElementById("menu").addEventListener("click", function () {
+          if (headerVisible === false) {
+              document.getElementById("header").style.height = "290px";
+              headerVisible = true;
+          } else {
+              document.getElementById("header").style.height = "50px";
+              headerVisible = false;
+          }
+      });
+
+      // Show "Go to Top" button after scrolling down
+      const goTopBtn = document.querySelector(".gotopbtn");
+      window.addEventListener("scroll", function () {
+          if (window.scrollY > 300) {  // Show the button after scrolling down 200px
+              goTopBtn.style.display = "block";
+          } else {
+              goTopBtn.style.display = "none";
+          }
+      });
+
+  })();
+  </script>
+    <script src="preloader.js"></script>
+    <script src="preloader.js"></script>
+    <script>
+        function handleSubmit(event) {
+            event.preventDefault(); 
+            const feedbackMessage = document.getElementById("feedbackMessage");
+            feedbackMessage.style.display = "block"; 
+
+            document.getElementById("feedbackForm").reset();
+        }
+    </script>
+
+    <button id="scrollToTopBtn" class="scroll-top" aria-label="Scroll to top">
+        <div class="scroll-top-icon">
+            <i class="fa-solid fa-arrow-up"></i>
+        </div>
+        <svg class="progress-ring" width="60" height="60">
+            <circle class="progress-ring__circle" stroke="#ffffff" stroke-width="4" fill="transparent" r="28" cx="30"
+                cy="30"></circle>
+        </svg>
+    </button>
+    <style>
+        .scroll-top {
+            position: fixed;
+            right: 1.6%;
+            background: linear-gradient(100deg, #1ca6f0, #3c7aff, #05deff);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 69, 159, 0.4);
+            overflow: visible;
+            z-index: 10;
+            bottom: 15px;
+            /* Ensure button is on top */
+        }
+    
+        .scroll-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+    
+        .scroll-top:hover {
+            transform: scale(1.1);
+            /* Subtle scaling instead of expanding */
+            box-shadow: 0 8px 20px rgba(255, 69, 159, 0.6);
+            /* Slightly larger shadow */
+        }
+    
+        .scroll-top:active {
+            transform: scale(1.05);
+            /* Minor scale reduction on click */
+        }
+    
+        .scroll-top-icon {
+            position: relative;
+            z-index: 2;
+            transition: transform 0.3s ease;
+        }
+    
+        .scroll-top:hover .scroll-top-icon {
+            transform: translateY(-3px);
+        }
+    
+        /* Progress Ring Styling */
+        .progress-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+            /* To start from the top */
+        }
+    
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform-origin: 50% 50%;
+        }
+    
+        /* Pulse Animation */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 5px 15px rgba(255, 69, 159, 0.4);
+            }
+    
+            50% {
+                box-shadow: 0 5px 15px rgba(255, 69, 159, 0.7);
+            }
+    
+            100% {
+                box-shadow: 0 5px 15px rgba(255, 69, 159, 0.4);
+            }
+        }
+    
+        .scroll-top:hover {
+            animation: pulse 1.5s infinite;
+        }
+    
+        .scroll-top.show {
+            animation: none;
+            /* No animation when showing the button */
+        }
+    
+        .scroll-top.show:hover {
+            animation: pulse 1.5s infinite;
+            /* Pulse on hover */
+        }
+    </style>
+    <script>
+        // Get the button
+        const scrollToTopBtn = document.getElementById("scrollToTopBtn");
+        const progressCircle = document.querySelector(".progress-ring__circle");
+        const radius = progressCircle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+    
+        // Set the circle progress properties
+        progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+        progressCircle.style.strokeDashoffset = circumference;
+    
+        // Function to show or hide the button based on scroll position
+        function toggleScrollButton() {
+            if (window.scrollY > 100) {
+                scrollToTopBtn.classList.add("show");
+            } else {
+                scrollToTopBtn.classList.remove("show");
+            }
+        }
+    
+        // Function to set the scroll progress on the button ring
+        function setProgress(percent) {
+            const offset = circumference - (percent / 100) * circumference;
+            progressCircle.style.strokeDashoffset = offset;
+        }
+    
+        // Listen for scroll events to update button visibility and progress
+        window.addEventListener("scroll", () => {
+            toggleScrollButton();
+            const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            setProgress(scrollPercent);
+        });
+    
+        // Smooth scroll to top when the button is clicked
+        scrollToTopBtn.addEventListener("click", () => {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        });
+      </script>
+      <div class="gtranslate_wrapper"></div>
+        <script>window.gtranslateSettings = {"default_language":"en","detect_browser_language":true,"wrapper_selector":".gtranslate_wrapper"}</script>
+<script src="https://cdn.gtranslate.net/widgets/latest/float.js" defer></script>
+</body>
+
+
+
+</html>
